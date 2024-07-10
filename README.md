@@ -5,6 +5,8 @@
 
 Chatbot Apps JS is a JavaScript project designed to create and manage various chatbot applications. This project leverages modern web technologies and a rich ecosystem of Node.js packages to build, test, and deploy chatbot functionalities.
 
+![Basic Interface](./images/basic.png)
+
 ## Project Structure
 
 The project structure is organized as follows:
