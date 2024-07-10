@@ -43,6 +43,13 @@
   left: -30px;
 }
 
+.chatImage {
+  max-width: 200px;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
 .botImage {
   width: 20px;
   height: 20px;
