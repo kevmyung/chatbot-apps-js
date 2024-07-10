@@ -47,13 +47,8 @@ export default function useChat() {
       imageUrl = images[0].src;
     }
 
-
-    console.log('Files in handleSubmit:', files); // Debug statement
-
     const fileUrls = files.map(file => URL.createObjectURL(file));
     const fileNames = files.map(file => file.name);
-
-    console.log('Files to be sent:', files); // Debug statement
 
     console.log('Sending message:', { text, imageUrl, fileUrls, fileNames }); // Debug statement
 

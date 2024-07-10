@@ -1,7 +1,11 @@
-
+import { ChatBedrockConverse } from "@langchain/aws";
+import { HumanMessage } from "@langchain/core/messages";
 import { BedrockRuntimeClient, ConverseStreamCommand } from "@aws-sdk/client-bedrock-runtime";
 
-const client = new BedrockRuntimeClient({ region: "us-east-1" });
+const model = new ChatBedrockConverse({
+  model: "anthropic.claude-3-sonnet-20240229-v1:0",
+  region: "us-east-1"
+});
 const modelId = "anthropic.claude-3-sonnet-20240229-v1:0";
 
 export const config = {
@@ -17,72 +21,68 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { messages, userId } = req.body; 
-  
+  const { messages, userId } = req.body;
+
   try {
     const processedMessages = messages.map(msg => {
-      if (msg.content && Array.isArray(msg.content) && msg.content.length > 0) {
-        return {
-          ...msg,
-          content: msg.content.map(content => {
-            if (content.image && content.image.source && Array.isArray(content.image.source.bytes)) {
+      if (msg.content) {
+        // Check if the message contains only text
+        if (Array.isArray(msg.content) && msg.content.length === 1 && msg.content[0].text) {
+          return msg.content[0].text;
+        }
+
+        // Handle messages with multiple content types
+        if (Array.isArray(msg.content) && msg.content.length > 0) {
+          const processedContent = msg.content.map(content => {
+            if (content.text) {
               return {
-                ...content,
-                image: {
-                  ...content.image,
-                  source: {
-                    bytes: new Uint8Array(content.image.source.bytes)
-                  }
+                type: 'text',
+                text: content.text
+              };
+            } else if (content.image && content.image.source && Array.isArray(content.image.source.bytes)) {
+              return {
+                type: 'image_url',
+                image_url: {
+                  url: `data:image/jpeg;base64,${Buffer.from(content.image.source.bytes).toString('base64')}`
                 }
               };
             } else if (content.document && content.document.source && Array.isArray(content.document.source.bytes)) {
               return {
-                ...content,
-                document: {
-                  ...content.document,
-                  source: {
-                    bytes: new Uint8Array(content.document.source.bytes)
-                  }
+                type: 'document_url',
+                document_url: {
+                  url: `data:application/pdf;base64,${Buffer.from(content.document.source.bytes).toString('base64')}`
                 }
               };
             }
             return content;
-          })
-        };
+          });
+
+          return { content: processedContent };
+        }
       }
       return msg;
     });
-
-    const command = new ConverseStreamCommand({
-      modelId: modelId,
-      messages: processedMessages,
-      system: [{ text: "You are a helpful AI assistant." }],
-      inferenceConfig: {
-        temperature: 0.5,
-        topP: 1,
-        maxTokens: 4096,
-      }
-    });
-
-    const response = await client.send(command);
+    
+    const stream = await model.stream([
+      new HumanMessage(processedMessages[0]),
+    ]);
+  
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
       'Connection': 'keep-alive'
     });
-
-    for await (const item of response.stream) {
-      if (item.contentBlockDelta) {
-        const text = item.contentBlockDelta.delta?.text;
-        if (text) {
-          res.write(`data: ${JSON.stringify({ text })}\n\n`);
-          res.flush();
-        }
+  
+    for await (const chunk of stream) {
+      const text = chunk.content;
+      if (text) {
+        const message = `data: ${JSON.stringify({ text })}\n\n`;
+        res.write(message);
+        res.flush();
       }
     }
-
-    res.end();
-
+  
+    res.end(); // Ensure the stream is closed properly
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred while processing your request' });
