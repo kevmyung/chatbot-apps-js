@@ -85,6 +85,28 @@
   border-top: 1px solid #333333;
 }
 
+.fileUploadLabel {
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.clipIcon {
+  font-size: 24px;
+  color: #999999;
+}
+
+.fileInput {
+  display: none;
+}
+
+.input {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  margin-right: 8px;
+}
+
 .input {
   flex-grow: 1;
   padding: 10px;
@@ -123,4 +145,39 @@
 .body {
   background-color: #121212;
   color: #e0e0e0;
+}
+
+.filePreview {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  gap: 5px;
+}
+
+.filePreviewItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #333333;
+  padding: 5px 10px;
+  border-radius: 10px;
+  color: #ffffff;
+}
+
+.filePreviewItem img {
+  max-width: 50px;
+  max-height: 50px;
+  margin-right: 10px;
+  border-radius: 5px;
+}
+
+.filePreviewItem span {
+  flex-grow: 1;
+}
+
+.filePreviewItem button {
+  background: none;
+  border: none;
+  color: #ff0000;
+  cursor: pointer;
 }

@@ -1,20 +1,27 @@
+
 import { BedrockRuntimeClient, ConverseStreamCommand } from "@aws-sdk/client-bedrock-runtime";
 
 const client = new BedrockRuntimeClient({ region: "us-east-1" });
 const modelId = "anthropic.claude-3-sonnet-20240229-v1:0";
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+};
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { message, messages } = req.body;
-
+  const { messages, userId } = req.body; 
+  
   try {
-    console.log(message);
-
     const processedMessages = messages.map(msg => {
-      if (msg.content && Array.isArray(msg.content)) {
+      if (msg.content && Array.isArray(msg.content) && msg.content.length > 0) {
         return {
           ...msg,
           content: msg.content.map(content => {
@@ -24,8 +31,17 @@ export default async function handler(req, res) {
                 image: {
                   ...content.image,
                   source: {
-                    ...content.image.source,
                     bytes: new Uint8Array(content.image.source.bytes)
+                  }
+                }
+              };
+            } else if (content.document && content.document.source && Array.isArray(content.document.source.bytes)) {
+              return {
+                ...content,
+                document: {
+                  ...content.document,
+                  source: {
+                    bytes: new Uint8Array(content.document.source.bytes)
                   }
                 }
               };
@@ -40,11 +56,11 @@ export default async function handler(req, res) {
     const command = new ConverseStreamCommand({
       modelId: modelId,
       messages: processedMessages,
-      system: [{text: "You are a helpful AI assistant."}],
+      system: [{ text: "You are a helpful AI assistant." }],
       inferenceConfig: {
         temperature: 0.5,
         topP: 1,
-        maxTokens: 500,
+        maxTokens: 4096,
       }
     });
 
@@ -60,10 +76,11 @@ export default async function handler(req, res) {
         const text = item.contentBlockDelta.delta?.text;
         if (text) {
           res.write(`data: ${JSON.stringify({ text })}\n\n`);
-          res.flush(); 
+          res.flush();
         }
       }
     }
+
     res.end();
 
   } catch (error) {

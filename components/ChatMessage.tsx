@@ -17,6 +17,13 @@ export default function ChatMessage({ msg }) {
             </a>
           </div>
         )}
+        {msg.documentUrl && (
+          <div className={styles.chatDocumentWrapper}>
+            <a href={msg.documentUrl} target="_blank" rel="noopener noreferrer" download={msg.documentName}>
+              {msg.documentName}
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );
