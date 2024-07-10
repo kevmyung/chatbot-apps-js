@@ -1,29 +1,37 @@
 import styles from '../app/ChatInterface.module.css';
 
-export default function ChatMessage({ msg }) {
+interface MessageProps {
+  text: string;
+  isUser: boolean;
+  imageUrl?: string;
+  documentUrls?: string[];
+  documentNames?: string[];
+}
+
+export default function ChatMessage({ text, isUser, imageUrl, documentUrls, documentNames }: MessageProps) {
   return (
-    <div className={`${styles.message} ${msg.isUser ? styles.userMessage : styles.botMessage}`}>
-      {!msg.isUser && (
+    <div className={`${styles.message} ${isUser ? styles.userMessage : styles.botMessage}`}>
+      {!isUser && (
         <div className={styles.imageWrapper}>
           <img src="/bedrock.png" alt="Bot" className={styles.botImage} />
         </div>
       )}
       <div className={styles.messageContent}>
-        {msg.text}
-        {msg.imageUrl && msg.isUser && (
+        {text}
+        {imageUrl && isUser && (
           <div className={styles.chatImageWrapper}>
-            <a href={msg.imageUrl} target="_blank" rel="noopener noreferrer">
-              <img src={msg.imageUrl} alt="Pasted image" className={styles.chatImage} />
+            <a href={imageUrl} target="_blank" rel="noopener noreferrer">
+              <img src={imageUrl} alt="Pasted image" className={styles.chatImage} />
             </a>
           </div>
         )}
-        {msg.documentUrl && (
-          <div className={styles.chatDocumentWrapper}>
-            <a href={msg.documentUrl} target="_blank" rel="noopener noreferrer" download={msg.documentName}>
-              {msg.documentName}
+        {documentUrls?.map((url, index) => (
+          <div className={styles.chatDocumentWrapper} key={index}>
+            <a href={url} target="_blank" rel="noopener noreferrer" download={documentNames?.[index]}>
+              {documentNames?.[index]}
             </a>
           </div>
-        )}
+        ))}
       </div>
     </div>
   );

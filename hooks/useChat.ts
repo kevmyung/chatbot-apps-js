@@ -1,21 +1,22 @@
-import { useState, useEffect, useRef, FormEvent, ChangeEvent } from 'react';
+import { useState, useEffect, useRef, FormEvent, KeyboardEvent } from 'react';
 import usePasteHandler from './usePasteHandler';
+import useFileHandler from './useFileHandler';
 import { sendMessageToApi } from '../utils/api';
 
-interface Message {
+export interface Message {
   text: string;
   isUser: boolean;
   imageUrl?: string;
-  documentUrl?: string;
-  documentName?: string;
+  documentUrls?: string[];
+  documentNames?: string[];
 }
 
 export default function useChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [files, setFiles] = useState<File[]>([]);
   const inputRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { files, setFiles, handleFileChange, removeFile } = useFileHandler();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -23,20 +24,8 @@ export default function useChat() {
 
   usePasteHandler(inputRef);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>, newFiles: File[]) => {
-    setFiles(newFiles);
-    console.log('Files selected in useChat:', newFiles); // Debug statement
-  };
-
-  useEffect(() => {
-    if (files.length > 0) {
-      console.log('Files updated:', files); // Debug statement
-    }
-  }, [files]);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>, files: File[]) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement> | KeyboardEvent<HTMLDivElement>, files: File[]) => {
     e.preventDefault();
-    console.log('Send button clicked'); // Debug statement
     if (isLoading) return;
 
     const text = inputRef.current?.innerText.trim() || '';
@@ -50,8 +39,6 @@ export default function useChat() {
     const fileUrls = files.map(file => URL.createObjectURL(file));
     const fileNames = files.map(file => file.name);
 
-    console.log('Sending message:', { text, imageUrl, fileUrls, fileNames }); // Debug statement
-
     if (!text && !imageUrl && files.length === 0) {
       console.error('No content to send');
       return;
@@ -59,29 +46,21 @@ export default function useChat() {
 
     setMessages(prev => [
       ...prev,
-      {
-        text,
-        isUser: true,
-        imageUrl,
-        documentUrls: fileUrls,
-        documentNames: fileNames
-      }
+      { text, isUser: true, imageUrl, documentUrls: fileUrls, documentNames: fileNames }
     ]);
     inputRef.current!.innerHTML = '';
     setFiles([]);
     setIsLoading(true);
 
     try {
-      console.log("sending files:", files)
       const response = await sendMessageToApi(text, imageUrl, files);
-      console.log('API response:', response); // Debug statement
 
       if (response.ok) {
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
         let botResponse = '';
 
-        setMessages(prev => [...prev, { text: '', isUser: false, imageUrl: '', documentUrl: '', documentName: '' }]);
+        setMessages(prev => [...prev, { text: '', isUser: false }]);
 
         const readChunk = async () => {
           const { done, value } = await reader!.read();
@@ -101,7 +80,7 @@ export default function useChat() {
 
                 setMessages(prev => [
                   ...prev.slice(0, -1),
-                  { text: botResponse, isUser: false, imageUrl: '', documentUrl: '', documentName: '' }
+                  { text: botResponse, isUser: false }
                 ]);
               } catch (error) {
                 console.error('JSON parsing error:', error);
@@ -127,6 +106,8 @@ export default function useChat() {
     messagesEndRef,
     isLoading,
     handleSubmit,
-    handleFileChange
+    files,
+    handleFileChange,
+    removeFile
   };
 }

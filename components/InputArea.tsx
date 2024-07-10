@@ -1,18 +1,31 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef, ChangeEvent, FormEvent, KeyboardEvent } from 'react';
 import { FaPaperclip, FaTimes } from 'react-icons/fa';
 import styles from '../app/ChatInterface.module.css';
-import useChat from '../hooks/useChat';
+import { Message } from '../hooks/useChat';
 
-export default function InputArea({ inputRef, isLoading, handleSubmit }) {
-  const { handleFileChange } = useChat();
-  const [files, setFiles] = useState<File[]>([]);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+interface InputAreaProps {
+  inputRef: React.RefObject<HTMLDivElement>;
+  isLoading: boolean;
+  handleSubmit: (e: FormEvent<HTMLFormElement> | KeyboardEvent<HTMLDivElement>, files: File[]) => Promise<void>;
+  files: File[];
+  handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  removeFile: (index: number) => void;
+}
+
+export default function InputArea({
+  inputRef,
+  isLoading,
+  handleSubmit,
+  files,
+  handleFileChange,
+  removeFile
+}: InputAreaProps) {
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
   const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
 
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('File change event triggered in InputArea'); // Debug statement
+  const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files);
       const validFiles: File[] = [];
@@ -24,34 +37,22 @@ export default function InputArea({ inputRef, isLoading, handleSubmit }) {
         } else {
           tooLargeFiles.push(file);
           setErrorMessage(`File size exceeds 3MB: ${file.name}`);
-          console.log('Files too large:', file.name);
         }
       });
 
-      setFiles([...files, ...validFiles]);
-      handleFileChange(e, [...files, ...validFiles]);
-
+      handleFileChange(e);
       if (tooLargeFiles.length > 0) {
         alert('Some files are too large to upload.');
       }
-
-      console.log('Files selected in InputArea:', validFiles.map(file => file.name));
     }
-  };
-
-  const removeFile = (index: number) => {
-    const newFiles = files.filter((_, i) => i !== index);
-    console.log('File deleted.');
-    setFiles(newFiles);
   };
 
   const clearErrorMessage = () => {
     setErrorMessage(null);
   };
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e: FormEvent<HTMLFormElement> | KeyboardEvent<HTMLDivElement>) => {
     e.preventDefault();
-    console.log('Submit triggered'); // Debug statement
     handleSubmit(e, files);
   };
 
@@ -90,7 +91,7 @@ export default function InputArea({ inputRef, isLoading, handleSubmit }) {
           onKeyPress={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
-              onSubmit(e as any);
+              onSubmit(e);
             }
           }}
         />

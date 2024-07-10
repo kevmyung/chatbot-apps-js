@@ -11,7 +11,10 @@ export default function Home() {
     inputRef,
     messagesEndRef,
     isLoading,
-    handleSubmit
+    handleSubmit,
+    files,
+    handleFileChange,
+    removeFile
   } = useChat();
 
   return (
@@ -22,6 +25,9 @@ export default function Home() {
         inputRef={inputRef}
         isLoading={isLoading}
         handleSubmit={handleSubmit}
+        files={files}
+        handleFileChange={handleFileChange}
+        removeFile={removeFile}
       />
     </div>
   );

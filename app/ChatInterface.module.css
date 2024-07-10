@@ -1,3 +1,4 @@
+/* General container styles */
 .container {
   display: flex;
   flex-direction: column;
@@ -8,12 +9,14 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
+/* Title styles */
 .title {
   text-align: center;
   color: #ffffff;
   margin-bottom: 10px;
 }
 
+/* Chat area styles */
 .chatArea {
   flex-grow: 1;
   overflow-y: auto;
@@ -24,6 +27,7 @@
   flex-direction: column;
 }
 
+/* Message styles */
 .message {
   max-width: 70%;
   padding: 10px;
@@ -77,6 +81,7 @@
   align-self: flex-start;
 }
 
+/* Input area styles */
 .inputArea {
   display: flex;
   gap: 10px;
@@ -97,14 +102,6 @@
 
 .fileInput {
   display: none;
-}
-
-.input {
-  flex: 1;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px;
-  margin-right: 8px;
 }
 
 .input {
@@ -142,11 +139,13 @@
   background-color: #0056b3;
 }
 
+/* Body background color */
 .body {
   background-color: #121212;
   color: #e0e0e0;
 }
 
+/* File preview styles */
 .filePreview {
   display: flex;
   flex-direction: column;
@@ -180,4 +179,23 @@
   border: none;
   color: #ff0000;
   cursor: pointer;
+}
+
+/* Error message styles */
+.errorMessage {
+  display: flex;
+  align-items: center;
+  background-color: #ff4d4d;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.errorMessage button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  margin-left: 10px;
 }

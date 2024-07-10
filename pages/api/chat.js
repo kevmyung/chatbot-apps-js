@@ -1,11 +1,14 @@
-import { ChatBedrockConverse } from "@langchain/aws";
-import { HumanMessage } from "@langchain/core/messages";
+import { BufferMemory } from "langchain/memory";
 import { BedrockRuntimeClient, ConverseStreamCommand } from "@aws-sdk/client-bedrock-runtime";
 
-const model = new ChatBedrockConverse({
-  model: "anthropic.claude-3-sonnet-20240229-v1:0",
-  region: "us-east-1"
+const chatPromptMemory = new BufferMemory({
+  memoryKey: "chat_history",
+  returnMessages: true,
 });
+
+const region = "us-east-1";
+const modelId = "anthropic.claude-3-sonnet-20240229-v1:0";
+const system_prompt = "You are a helpful AI assistant.";
 
 export const config = {
   api: {
@@ -15,71 +18,86 @@ export const config = {
   },
 };
 
+const client = new BedrockRuntimeClient({ region: region });
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const { messages, userId } = req.body;
-
+  
   try {
     const processedMessages = messages.map(msg => {
-      if (msg.content) {
-        if (Array.isArray(msg.content) && msg.content.length === 1 && msg.content[0].text) {
-          return msg.content[0].text;
-        }
-
-        if (Array.isArray(msg.content) && msg.content.length > 0) {
-          const processedContent = msg.content.map(content => {
-            if (content.text) {
+      if (msg.content && Array.isArray(msg.content) && msg.content.length > 0) {
+        return {
+          ...msg,
+          content: msg.content.map(content => {
+            if (content.image && content.image.source && Array.isArray(content.image.source.bytes)) {
               return {
-                type: 'text',
-                text: content.text
-              };
-            } else if (content.image && content.image.source && Array.isArray(content.image.source.bytes)) {
-              return {
-                type: 'image_url',
-                image_url: {
-                  url: `data:image/jpeg;base64,${Buffer.from(content.image.source.bytes).toString('base64')}`
+                ...content,
+                image: {
+                  ...content.image,
+                  source: {
+                    bytes: new Uint8Array(content.image.source.bytes)
+                  }
                 }
               };
             } else if (content.document && content.document.source && Array.isArray(content.document.source.bytes)) {
               return {
-                type: 'document_url',
-                document_url: {
-                  url: `data:application/pdf;base64,${Buffer.from(content.document.source.bytes).toString('base64')}`
+                ...content,
+                document: {
+                  ...content.document,
+                  source: {
+                    bytes: new Uint8Array(content.document.source.bytes)
+                  }
                 }
               };
             }
             return content;
-          });
-
-          return { content: processedContent };
-        }
+          })
+        };
       }
       return msg;
     });
-    
-    const stream = await model.stream([
-      new HumanMessage(processedMessages[0]),
-    ]);
-  
+
+    chatPromptMemory.chatHistory.addMessage(processedMessages[0]);
+    const chatHistoryData = await chatPromptMemory.loadMemoryVariables({});
+    const commandMessage = chatHistoryData.chat_history.slice(-10)
+
+    const command = new ConverseStreamCommand({
+      modelId: modelId,
+      system: [{text: system_prompt}],
+      messages: commandMessage,
+      inferenceConfig: {
+        temperature: 0.5,
+        topP: 1,
+        maxTokens: 4096,
+      }
+    });
+
+    const response = await client.send(command);
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
       'Cache-Control': 'no-cache',
       'Connection': 'keep-alive'
     });
-  
-    for await (const chunk of stream) {
-      const text = chunk.content;
-      if (text) {
-        const message = `data: ${JSON.stringify({ text })}\n\n`;
-        res.write(message);
-        res.flush();
+
+    let aiResponse = '';
+    for await (const item of response.stream) {
+      if (item.contentBlockDelta) {
+        const text = item.contentBlockDelta.delta?.text;
+        if (text) {
+          aiResponse += text;
+          res.write(`data: ${JSON.stringify({ text })}\n\n`);
+          res.flush();
+        }
       }
     }
-  
-    res.end(); 
+
+    chatPromptMemory.chatHistory.addMessage({ role: "assistant", content: [{ text: aiResponse}]});
+    res.end();
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred while processing your request' });
