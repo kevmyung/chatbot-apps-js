@@ -6,7 +6,6 @@ const model = new ChatBedrockConverse({
   model: "anthropic.claude-3-sonnet-20240229-v1:0",
   region: "us-east-1"
 });
-const modelId = "anthropic.claude-3-sonnet-20240229-v1:0";
 
 export const config = {
   api: {
@@ -26,12 +25,10 @@ export default async function handler(req, res) {
   try {
     const processedMessages = messages.map(msg => {
       if (msg.content) {
-        // Check if the message contains only text
         if (Array.isArray(msg.content) && msg.content.length === 1 && msg.content[0].text) {
           return msg.content[0].text;
         }
 
-        // Handle messages with multiple content types
         if (Array.isArray(msg.content) && msg.content.length > 0) {
           const processedContent = msg.content.map(content => {
             if (content.text) {
@@ -82,7 +79,7 @@ export default async function handler(req, res) {
       }
     }
   
-    res.end(); // Ensure the stream is closed properly
+    res.end(); 
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred while processing your request' });

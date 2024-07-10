@@ -9,7 +9,7 @@ export default function InputArea({ inputRef, isLoading, handleSubmit }) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+  const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log('File change event triggered in InputArea'); // Debug statement
@@ -79,7 +79,7 @@ export default function InputArea({ inputRef, isLoading, handleSubmit }) {
         <input
           id="file-upload"
           type="file"
-          accept=".csv,.txt,.md,.jpg,.jpeg,.png"
+          accept=".jpg,.jpeg,.png"
           onChange={onFileChange}
           className={styles.fileInput}
         />
