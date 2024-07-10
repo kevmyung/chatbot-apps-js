@@ -1,5 +1,5 @@
 
-# Chatbot Apps JS
+# Bedrock Chatbot Apps (NextJS ver.)
 
 ## Overview
 
