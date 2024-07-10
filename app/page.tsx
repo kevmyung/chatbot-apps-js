@@ -1,113 +1,157 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import styles from './ChatInterface.module.css';
 
 export default function Home() {
+  const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean; imageUrl?: string }>>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const inputRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handlePaste = (event: ClipboardEvent) => {
+    event.preventDefault(); 
+    const items = event.clipboardData?.items;
+    if (items) {
+      for (const item of items) {
+        if (item.type.startsWith('image/')) {
+          const file = item.getAsFile();
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              if (inputRef.current) {
+                const img = document.createElement('img');
+                img.src = e.target?.result as string;
+                img.style.maxWidth = '200px';
+                img.style.maxHeight = '200px';
+                img.style.objectFit = 'contain';
+                inputRef.current.appendChild(img);
+              }
+            };
+            reader.readAsDataURL(file);
+          }
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    const inputElement = inputRef.current;
+    inputElement?.addEventListener('paste', handlePaste);
+    return () => {
+      inputElement?.removeEventListener('paste', handlePaste);
+    };
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (isLoading) return;
+
+    const text = inputRef.current?.innerText || '';
+    const images = inputRef.current?.getElementsByTagName('img');
+
+    let imageUrl = '';
+    if (images?.length) {
+      imageUrl = images[0].src;
+    }
+
+    setMessages(prev => [...prev, { text, isUser: true, imageUrl }]);
+    inputRef.current!.innerHTML = '';
+    setIsLoading(true);
+
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        message: text,
+        messages: [{ role: 'user', content: [{ text }] }]
+      }),
+    });
+
+    if (response.ok) {
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let botResponse = '';
+
+      setMessages(prev => [...prev, { text: '', isUser: false, imageUrl: '' }]);
+
+      const readChunk = async () => {
+        const { done, value } = await reader!.read();
+        if (done) {
+          setIsLoading(false);
+          return;
+        }
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n');
+
+        lines.forEach(line => {
+          if (line.startsWith('data: ')) {
+            const jsonText = line.slice(6);
+            try {
+              const parsedChunk = JSON.parse(jsonText);
+              botResponse += parsedChunk.text;
+
+              setMessages(prev => [
+                ...prev.slice(0, -1),
+                { text: botResponse, isUser: false, imageUrl: '' }
+              ]);
+            } catch (error) {
+              console.error('JSON parsing error:', error);
+            }
+          }
+        });
+        readChunk();
+      };
+      readChunk();
+    } else {
+      console.error('Error:', response.statusText);
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Bedrock Chatbot</h1>
+      <div className={styles.chatArea}>
+        {messages.map((msg, index) => (
+          <div key={index} className={`${styles.message} ${msg.isUser ? styles.userMessage : styles.botMessage}`}>
+            {!msg.isUser && (
+              <div className={styles.imageWrapper}>
+                <img src="/bedrock.png" alt="Bot" className={styles.botImage} />
+              </div>
+            )}
+            <div className={styles.messageContent}>
+              {msg.text}
+              {msg.imageUrl && msg.isUser && (
+                <div className={styles.chatImageWrapper}>
+                  <a href={msg.imageUrl} target="_blank" rel="noopener noreferrer">
+                    <img src={msg.imageUrl} alt="Pasted image" className={styles.chatImage} />
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+        <div ref={messagesEndRef} />
       </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+      <form onSubmit={handleSubmit} className={styles.inputArea}>
+        <div
+          contentEditable
+          ref={inputRef}
+          className={styles.input}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit(e as any);
+            }
+          }}
         />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+        <button type="submit" className={styles.sendButton} disabled={isLoading}>Send</button>
+      </form>
+    </div>
   );
 }
