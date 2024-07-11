@@ -63,7 +63,7 @@ export default async function handler(req, res) {
 
     chatPromptMemory.chatHistory.addMessage(processedMessages[0]);
     const chatHistoryData = await chatPromptMemory.loadMemoryVariables({});
-    const commandMessage = chatHistoryData.chat_history.slice(-10)
+    const commandMessage = chatHistoryData.chat_history.slice(-5)
 
     const command = new ConverseStreamCommand({
       modelId: modelId,

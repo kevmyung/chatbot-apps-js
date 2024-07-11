@@ -3,9 +3,10 @@ import { useEffect } from 'react';
 export default function usePasteHandler(inputRef: React.RefObject<HTMLDivElement>) {
   useEffect(() => {
     const handlePaste = (event: ClipboardEvent) => {
-      event.preventDefault(); 
+      event.preventDefault();
       const items = event.clipboardData?.items;
       if (items) {
+        let textAdded = false;
         for (const item of items) {
           if (item.type.startsWith('image/')) {
             const file = item.getAsFile();
@@ -23,6 +24,14 @@ export default function usePasteHandler(inputRef: React.RefObject<HTMLDivElement
               };
               reader.readAsDataURL(file);
             }
+          } else if (item.type === 'text/plain' && !textAdded) {
+            textAdded = true;
+            item.getAsString((text) => {
+              if (inputRef.current) {
+                const textNode = document.createTextNode(text);
+                inputRef.current.appendChild(textNode);
+              }
+            });
           }
         }
       }
