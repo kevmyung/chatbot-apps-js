@@ -3,85 +3,60 @@
 
 ## Overview
 
-Chatbot Apps JS is a JavaScript project designed to create and manage various chatbot applications. This project leverages modern web technologies and a rich ecosystem of Node.js packages to build, test, and deploy chatbot functionalities.
+This is a Next.js-based web frontend application for a chatbot that leverages the Bedrock Converse API for model invocation. The application includes several key features:
 
 ![Basic Interface](./images/basic.png)
 
-## Project Structure
+### Basic Features
+- **Next.js Web Frontend**: Built using the powerful Next.js framework.
+- **Bedrock Converse API**: Utilizes the Bedrock Converse API for chatbot model invocation.
 
-The project structure is organized as follows:
+### Additional Features
+- **Multimodal Chat**: Supports multimodal interactions (File upload / Clipboard).
+- **Environment Configuration**: Easy setup and configuration of the environment.
+- **In-Memory Chat History**: Maintains chat history in memory for quick access.
 
-```
+## File Structure
+
+The project is organized as follows:
+
+```plaintext
 chatbot-apps-js/
-├── node_modules/          # Contains all the Node.js dependencies
-├── src/                   # Source code for the chatbot applications
-├── public/                # Static files for the frontend
-├── tests/                 # Test cases for the application
-├── .eslintrc.json         # ESLint configuration file
-├── .gitignore             # Git ignore file
-├── package.json           # NPM package configuration file
-├── package-lock.json      # NPM package lock file
-├── README.md              # Project documentation
-└── ...
+├── app/
+│   ├── page.tsx
+│   ├── ...
+├── components/ 
+│   ├── ...
+├── hooks/
+│   ├── ...
+├── pages/
+│   ├── ...
+├── utils/
+│   ├── ...
+├── public/
+│   ├── ...
+├── package.json
+├── README.md
+└── SETUP.md
 ```
 
-## Prerequisites
 
-### Node.js
+### Main Components
 
-Ensure you have Node.js installed. The recommended version is specified in the `package.json` file under the `engines` field.
+- **app/page.tsx** : This file is the main entry point of the application. It handles the rendering of the main chat interface and incorporates various components and hooks.
 
-To check your Node.js version, run:
+- **app/SettingsPopup.module.css** and **app/ChatInterface.module.css** : These CSS modules provide styling for the settings popup and chat interface respectively.
 
-```bash
-node -v
-```
+- **components/**: : This directory contains reusable React components used throughout the application.
 
-### npm
+- **hooks/** : Custom hooks used to manage state and side effects in the application.
 
-npm (Node Package Manager) is required to manage the dependencies. To check your npm version, run:
+- **pages/** : Next.js pages directory for defining the application’s routes (defines an API endpoint).
 
-```bash
-npm -v
-```
+- **utils/** : Utility functions and helpers used across the application.
 
-## Installation
 
-To install the necessary dependencies, run the following command:
+## Getting Started
 
-```bash
-npm install
-```
-
-## Usage
-
-### Development Server
-
-To start the development server, run:
-
-```bash
-npm start
-```
-
-This will start the application on `http://localhost:3000`.
-
-### Building the Project
-
-To build the project for production, run:
-
-```bash
-npm run build
-```
-
-The built files will be output to the `build` directory.
-
-### Running Tests
-
-To execute the test suite, run:
-
-```bash
-npm test
-```
-
-This will run all tests defined in the `tests` directory.
+To get started with the project, please refer to the `SETUP.md` file for detailed instructions on setting up your environment and running the application.
 

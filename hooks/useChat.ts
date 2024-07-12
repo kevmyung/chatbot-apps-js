@@ -11,9 +11,10 @@ export interface Message {
   documentNames?: string[];
 }
 
-export default function useChat() {
+export default function useChat(settings) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const inputRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { files, setFiles, handleFileChange, removeFile } = useFileHandler();
@@ -51,9 +52,10 @@ export default function useChat() {
     inputRef.current!.innerHTML = '';
     setFiles([]);
     setIsLoading(true);
+    setErrorMessage(null);  // 에러 메시지 초기화
 
     try {
-      const response = await sendMessageToApi(text, imageUrl, files);
+      const response = await sendMessageToApi(text, imageUrl, files, settings);
 
       if (response.ok) {
         const reader = response.body?.getReader();
@@ -91,13 +93,20 @@ export default function useChat() {
         };
         readChunk();
       } else {
+        setErrorMessage('An API error occurred. Please reset the chat or check your configuration.');
         console.error('API response error:', response.statusText);
         setIsLoading(false);
       }
     } catch (error) {
+      setErrorMessage('An API error occurred. Please reset the chat or check your configuration.');
       console.error('Error sending message:', error);
       setIsLoading(false);
     }
+  };
+
+  const resetMessages = () => {
+    setMessages([]);
+    setErrorMessage(null);
   };
 
   return {
@@ -105,9 +114,11 @@ export default function useChat() {
     inputRef,
     messagesEndRef,
     isLoading,
+    errorMessage,
     handleSubmit,
     files,
     handleFileChange,
-    removeFile
+    removeFile,
+    resetMessages
   };
 }

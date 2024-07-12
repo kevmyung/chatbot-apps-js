@@ -6,10 +6,6 @@ const chatPromptMemory = new BufferMemory({
   returnMessages: true,
 });
 
-const region = "us-east-1";
-const modelId = "anthropic.claude-3-sonnet-20240229-v1:0";
-const system_prompt = "You are a helpful AI assistant.";
-
 export const config = {
   api: {
     bodyParser: {
@@ -18,14 +14,16 @@ export const config = {
   },
 };
 
-const client = new BedrockRuntimeClient({ region: region });
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { messages, userId } = req.body;
+  const { messages, userId, settings } = req.body;
+  const region = settings?.region || 'us-east-1';
+  const modelId = settings?.model || 'anthropic.claude-3-sonnet-20240229-v1:0';
+  const system_prompt = settings?.systemPrompt || 'You are a helpful assistant';
+  const client = new BedrockRuntimeClient({ region: region });
   
   try {
     const processedMessages = messages.map(msg => {
@@ -67,7 +65,7 @@ export default async function handler(req, res) {
 
     const command = new ConverseStreamCommand({
       modelId: modelId,
-      system: [{text: system_prompt}],
+      system: [{ text: system_prompt }],
       messages: commandMessage,
       inferenceConfig: {
         temperature: 0.5,
@@ -95,7 +93,7 @@ export default async function handler(req, res) {
       }
     }
 
-    chatPromptMemory.chatHistory.addMessage({ role: "assistant", content: [{ text: aiResponse}]});
+    chatPromptMemory.chatHistory.addMessage({ role: "assistant", content: [{ text: aiResponse }] });
     res.end();
 
   } catch (error) {

@@ -1,4 +1,4 @@
-export async function sendMessageToApi(text: string, imageUrl: string, files: File[] | null) {
+export async function sendMessageToApi(text: string, imageUrl: string, files: File[] | null, settings) {
     const messages = [{ role: 'user', content: [] as any[] }];
 
     if (!text && files && files.length > 0) {
@@ -57,9 +57,8 @@ export async function sendMessageToApi(text: string, imageUrl: string, files: Fi
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'userId': 'user123'
         },
-        body: JSON.stringify({ messages: messages }),
+        body: JSON.stringify({ messages: messages, settings: settings, userId: 'user123' }),
     });
 
     console.log('API response status:', response.status); // Debug statement

@@ -16,6 +16,30 @@
   margin-bottom: 10px;
 }
 
+/* Icons style */
+.container {
+  position: relative;
+}
+
+.buttonContainer {
+  position: absolute;
+  top: 50px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.newChatButton,
+.settingsButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.icon {
+  color: rgba(255, 255, 255, 0.5);
+}
+
 /* Chat area styles */
 .chatArea {
   flex-grow: 1;
@@ -93,10 +117,11 @@
 .fileUploadLabel {
   cursor: pointer;
   margin-right: 8px;
+  margin-top: 10px;
 }
 
 .clipIcon {
-  font-size: 24px;
+  font-size: 20px;
   color: #999999;
 }
 
@@ -115,11 +140,11 @@
 }
 
 .input::placeholder {
-  color: #999999; 
+  color: #999999;
 }
 
 .input:empty:before {
-  content: attr(data-placeholder); 
+  content: attr(data-placeholder);
   color: #999999;
   pointer-events: none;
   position: absolute;
