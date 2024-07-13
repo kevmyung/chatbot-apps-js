@@ -20,7 +20,7 @@ This is a Next.js-based web frontend application for a chatbot that leverages th
 
 The project is organized as follows:
 
-```plaintext
+```
 chatbot-apps-js/
 ├── app/
 │   ├── page.tsx
@@ -35,25 +35,33 @@ chatbot-apps-js/
 │   ├── ...
 ├── public/
 │   ├── ...
+├── py-backend/
+│   ├── app/
+│   │   ├── app.py
+│   │   ├── ...
+│   │   ├── libs/
+│   │   │   ├── ...
+│   │   ├── ...
 ├── package.json
 ├── README.md
 └── SETUP.md
 ```
 
+app/page.tsx : This file is the main entry point of the application. It handles the rendering of the main chat interface and incorporates various components and hooks.
 
-### Main Components
+app/SettingsPopup.module.css and app/ChatInterface.module.css : These CSS modules provide styling for the settings popup and chat interface respectively.
 
-- **app/page.tsx** : This file is the main entry point of the application. It handles the rendering of the main chat interface and incorporates various components and hooks.
+components/: This directory contains reusable React components used throughout the application.
 
-- **app/SettingsPopup.module.css** and **app/ChatInterface.module.css** : These CSS modules provide styling for the settings popup and chat interface respectively.
+hooks/ : Custom hooks used to manage state and side effects in the application.
 
-- **components/**: : This directory contains reusable React components used throughout the application.
+pages/ : Next.js pages directory for defining the application’s routes (defines an API endpoint).
 
-- **hooks/** : Custom hooks used to manage state and side effects in the application.
+utils/ : Utility functions and helpers used across the application.
 
-- **pages/** : Next.js pages directory for defining the application’s routes (defines an API endpoint).
+py-backend/app/app.py : The main entry point for the FastAPI backend, handling API requests and routing.
 
-- **utils/** : Utility functions and helpers used across the application.
+py-backend/app/libs/ : Contains custom helper libraries for backend services.
 
 
 ## Getting Started
