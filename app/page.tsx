@@ -31,6 +31,7 @@ export default function Home() {
     inputRef,
     messagesEndRef,
     isLoading,
+    isSearching,
     handleSubmit,
     files,
     handleFileChange,
@@ -81,7 +82,7 @@ export default function Home() {
         </button>
       </div>
       {errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>}
-      <ChatArea messages={messages} messagesEndRef={messagesEndRef} />
+      <ChatArea messages={messages} messagesEndRef={messagesEndRef} isSearching={isSearching} />
       <InputArea
         inputRef={inputRef}
         isLoading={isLoading}

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export async function sendMessageToApi(text: string, imageUrl: string, files: File[] | null, settings, ragResult: string | null = null) {
+export async function sendMessageToApi(text: string, imageUrl: string, files: File[] | null, settings, ragResult: any = null) {
   const messages = [{ role: 'user', content: [] as any[] }];
 
   if (!text && files && files.length > 0) {
@@ -8,7 +8,14 @@ export async function sendMessageToApi(text: string, imageUrl: string, files: Fi
   }
 
   if (text) {
-    messages[0].content.push({ text });
+    if (ragResult) {
+      const contextContent = ragResult.map((item: any) => item.content).join('\n---\n');
+      const formattedRagResult = `Using the context below, answer the User Question. <context>\n${contextContent}\n</context>\n\nQuestion: ${text}`;
+      messages[0].content.push({ text: formattedRagResult });
+    } else {
+      messages[0].content.push({ text });
+    }
+    console.log("prompt:", messages[0].content)
   }
 
   if (imageUrl) {
@@ -22,7 +29,7 @@ export async function sendMessageToApi(text: string, imageUrl: string, files: Fi
       image: {
         format,
         source: {
-          bytes: Array.from(uint8Array) // Convert Uint8Array to regular array
+          bytes: Array.from(uint8Array) 
         }
       }
     });
@@ -41,7 +48,7 @@ export async function sendMessageToApi(text: string, imageUrl: string, files: Fi
           image: {
             format,
             source: {
-              bytes: Array.from(uint8Array) // Convert Uint8Array to regular array
+              bytes: Array.from(uint8Array)
             }
           }
         });
@@ -50,10 +57,6 @@ export async function sendMessageToApi(text: string, imageUrl: string, files: Fi
         console.log("unsupported file format:", format);
       }
     }
-  }
-
-  if (ragResult) {
-    messages[0].content.push({ text: ragResult });
   }
 
   if (messages[0].content.length === 0) {
@@ -67,7 +70,7 @@ export async function sendMessageToApi(text: string, imageUrl: string, files: Fi
     body: JSON.stringify({ messages: messages, settings: settings, userId: 'user123' }),
   });
 
-  console.log('API response status:', response.status); // Debug statement
+  console.log('API response status:', response.status); 
   return response;
 }
 
@@ -77,13 +80,14 @@ export async function searchApi(text: string, chatMode: string, searchSettings: 
     formData.append('text', text);
     formData.append('chat_mode', chatMode);
     formData.append('search_settings', JSON.stringify(searchSettings));
-    
-    const response = await axios.post('http://localhost:8000/search', formData, {
+
+    const response = await axios.post('/api/search', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
-    return response.data.context;
+    const data = JSON.parse(response.data.output);
+    return data;
   } catch (error) {
     console.error('Error calling search API:', error);
     throw error;

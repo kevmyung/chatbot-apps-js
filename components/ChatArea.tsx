@@ -1,18 +1,21 @@
 import styles from '../app/ChatInterface.module.css';
 import ChatMessage from './ChatMessage';
-import { Message } from '../hooks/useChat';
 
 interface ChatAreaProps {
-  messages: Message[];
+  messages: { id: number, text: string, isUser: boolean }[];
   messagesEndRef: React.RefObject<HTMLDivElement>;
+  isSearching: boolean; 
 }
 
-export default function ChatArea({ messages, messagesEndRef }: ChatAreaProps) {
+export default function ChatArea({ messages, messagesEndRef, isSearching }: ChatAreaProps) {
   return (
     <div className={styles.chatArea}>
-      {messages.map((msg, index) => (
-        <ChatMessage key={index} {...msg} />
+      {messages.map((message) => (
+        <ChatMessage key={message.id} {...message} />
       ))}
+      {isSearching && (
+        <ChatMessage key="searching" text="Searching..." isUser={false} />
+      )}
       <div ref={messagesEndRef} />
     </div>
   );

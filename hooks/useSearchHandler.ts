@@ -3,7 +3,7 @@ import axios from 'axios';
 export const useSearchHandler = () => {
   const processFiles = async (formData: FormData) => {
     try {
-      const response = await axios.post('http://localhost:8000/process', formData, {
+      const response = await axios.post('/api/process', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -21,7 +21,7 @@ export const useSearchHandler = () => {
       const formData = new FormData();
       formData.append('embedding_model', embeddingModel);
   
-      const response = await axios.post('http://localhost:8000/initialize', formData, {
+      const response = await axios.post('/api/initialize', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

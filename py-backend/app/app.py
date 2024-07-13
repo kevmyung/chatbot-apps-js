@@ -52,7 +52,6 @@ async def process(
 @app.post("/initialize")
 async def initialize(embedding_model: str = Form(...)):
     try:
-        print("initializing")
         result = subprocess.run(
             [sys.executable, 'py-backend/app/initialize.py', embedding_model],
             capture_output=True,
@@ -65,14 +64,12 @@ async def initialize(embedding_model: str = Form(...)):
 @app.post("/search")
 async def search(text: str = Form(...), chat_mode: str = Form(...), search_settings: str = Form(...)):
     try:
-        print("searching")
         result = subprocess.run(
             [sys.executable, 'py-backend/app/search.py', text, chat_mode, search_settings],
             capture_output=True,
             text=True
         )
         output = result.stdout.strip()
-        print(output)
         return {"output": output, "error": result.stderr.strip()}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

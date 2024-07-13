@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef, FormEvent, KeyboardEvent } from 'react';
 import usePasteHandler from './usePasteHandler';
-import useFileHandler from './useFileHandler';
+import useFileHandler from '../hooks/useFileHandler';
 import { sendMessageToApi, searchApi } from '../utils/api';
+import axios from 'axios';
 
 export interface Message {
+  id: number;
   text: string;
   isUser: boolean;
   imageUrl?: string;
@@ -11,9 +13,10 @@ export interface Message {
   documentNames?: string[];
 }
 
-export default function useChat(settings, searchSettings) { // searchSettings ì¸ìë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
+export default function useChat(settings, searchSettings) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const inputRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -45,20 +48,30 @@ export default function useChat(settings, searchSettings) { // searchSettings ì
       return;
     }
 
+    const newMessageId = Date.now();
+
     setMessages(prev => [
       ...prev,
-      { text, isUser: true, imageUrl, documentUrls: fileUrls, documentNames: fileNames }
+      { id: newMessageId, text, isUser: true, imageUrl, documentUrls: fileUrls, documentNames: fileNames }
     ]);
     inputRef.current!.innerHTML = '';
     setFiles([]);
     setIsLoading(true);
+    setIsSearching(true);
     setErrorMessage(null); 
 
     try {
       let ragResult = null;
+      const assistantMessageId = newMessageId + 1;
+      
       if (settings.chatMode === 'RAG') {
         ragResult = await searchApi(text, settings.chatMode, searchSettings);
+        setMessages(prev => [...prev, { id: assistantMessageId, text: 'Done!', isUser: false }]);
+      } else {
+        setMessages(prev => [...prev, { id: assistantMessageId, text: '', isUser: false }]);
       }
+      
+      setIsSearching(false);
 
       const response = await sendMessageToApi(text, imageUrl, files, settings, ragResult);
 
@@ -66,8 +79,6 @@ export default function useChat(settings, searchSettings) { // searchSettings ì
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
         let botResponse = '';
-
-        setMessages(prev => [...prev, { text: '', isUser: false }]);
 
         const readChunk = async () => {
           const { done, value } = await reader!.read();
@@ -85,10 +96,11 @@ export default function useChat(settings, searchSettings) { // searchSettings ì
                 const parsedChunk = JSON.parse(jsonText);
                 botResponse += parsedChunk.text;
 
-                setMessages(prev => [
-                  ...prev.slice(0, -1),
-                  { text: botResponse, isUser: false }
-                ]);
+                setMessages(prev => 
+                  prev.map(message => 
+                    message.id === assistantMessageId ? { ...message, text: botResponse } : message
+                  )
+                );
               } catch (error) {
                 console.error('JSON parsing error:', error);
               }
@@ -106,12 +118,14 @@ export default function useChat(settings, searchSettings) { // searchSettings ì
       setErrorMessage('An API error occurred. Please reset the chat or check your configuration.');
       console.error('Error sending message:', error);
       setIsLoading(false);
+      setIsSearching(false);
     }
   };
 
-  const resetMessages = () => {
+  const resetMessages = async () => {
     setMessages([]);
     setErrorMessage(null);
+    await axios.post('/api/chat', { reset: true });
   };
 
   return {
@@ -119,6 +133,7 @@ export default function useChat(settings, searchSettings) { // searchSettings ì
     inputRef,
     messagesEndRef,
     isLoading,
+    isSearching,
     errorMessage,
     handleSubmit,
     files,
