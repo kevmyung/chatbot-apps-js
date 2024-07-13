@@ -34,3 +34,20 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Ignore dependency directories
+__pypackages__/
+
+
+# OpenSearch Auth
+py-backend/app/libs/opensearch.yml
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env/
+*.env
+
+# macOS
+.DS_Store

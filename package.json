@@ -3,26 +3,32 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"npm run server\" \"npm run client-dev\"",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "concurrently \"npm run server\" \"npm run client-start\"",
+    "lint": "next lint",
+    "server": "uvicorn py-backend.app.app:app --reload",
+    "client-dev": "next dev",
+    "client-start": "next start"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.609.0",
     "@langchain/aws": "^0.0.1",
     "@langchain/core": "^0.2.15",
+    "axios": "^1.7.2",
     "formidable": "^3.5.1",
     "langchain": "^0.2.9",
     "next": "14.2.4",
     "react": "^18",
     "react-dom": "^18",
+    "react-dropzone": "^14.2.3",
     "react-icons": "^5.2.1"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "concurrently": "^8.2.2",
     "eslint": "^8",
     "eslint-config-next": "14.2.4",
     "postcss": "^8",

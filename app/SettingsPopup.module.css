@@ -1,68 +1,93 @@
+/* Overlay for the popup */
 .popupOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-  
-  .popup {
-    background: #333;
-    padding: 20px;
-    border-radius: 8px;
-    width: 300px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    font-family: 'Roboto', sans-serif;
-  }
-  
-  .inputGroup {
-    margin-bottom: 15px;
-  }
-  
-  .inputGroup label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #fff;
-  }
-  
-  .inputGroup select,
-  .inputGroup textarea,
-  .inputGroup input {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-    border: 1px solid #555;
-    border-radius: 4px;
-    background: #444;
-    color: #fff;
-    font-family: 'Open Sans', sans-serif;
-  }
-  
-  .buttonGroup {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .saveButton, .cancelButton {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: 'Roboto', sans-serif;
-  }
-  
-  .saveButton {
-    background-color: #007aff;
-    color: #fff;
-  }
-  
-  .cancelButton {
-    background-color: #ccc;
-    color: #333;
-  }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Main popup container */
+.popup {
+  background: #333;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  height: 500px;  /* Adjusted height */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Nunito', sans-serif;
+}
+
+/* Input group container */
+.inputGroup {
+  margin-bottom: 15px;
+}
+
+/* Input group labels */
+.inputGroup label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #fff;
+  font-size: 16px;
+}
+
+/* Input group select fields */
+.inputGroup select,
+.inputGroup textarea,
+.inputGroup input {
+  width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #444;
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+}
+
+/* Button group container */
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Save and Cancel buttons */
+.saveButton, .cancelButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.saveButton {
+  background-color: #007aff;
+  color: #fff;
+}
+
+.saveButton:hover {
+  background-color: #0056b3;
+}
+
+.cancelButton {
+  background-color: #ccc;
+  color: #333;
+}
+
+.cancelButton:hover {
+  background-color: #999;
+}
+
+/* Margin top class for spacing */
+.marginTop {
+  margin-top: 10px;
+}

@@ -14,6 +14,8 @@
   text-align: center;
   color: #ffffff;
   margin-bottom: 10px;
+  font-size: 28px; /* Adjust font size if needed */
+  margin-top: 20px; /* Add margin at the top to create space */
 }
 
 /* Icons style */
@@ -23,14 +25,13 @@
 
 .buttonContainer {
   position: absolute;
-  top: 50px;
+  top: 20px; /* Adjusted to move icons higher */
   right: 16px;
   display: flex;
   gap: 8px;
 }
 
-.newChatButton,
-.settingsButton {
+.newChatButton, .settingsButton, .searchButton {
   background: none;
   border: none;
   cursor: pointer;
@@ -49,6 +50,7 @@
   background-color: #1e1e1e;
   display: flex;
   flex-direction: column;
+  margin-bottom: 60px; /* Add bottom margin to avoid overlap with URL bar */
 }
 
 /* Message styles */
@@ -112,6 +114,7 @@
   padding: 10px;
   background-color: #1e1e1e;
   border-top: 1px solid #333333;
+  margin-bottom: 20px; /* Ensure space from the bottom */
 }
 
 .fileUploadLabel {
@@ -223,4 +226,41 @@
   color: white;
   cursor: pointer;
   margin-left: 10px;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 600px) {
+  .container {
+    padding: 10px;
+  }
+
+  .buttonContainer {
+    top: 10px;
+    right: 10px;
+  }
+
+  .title {
+    font-size: 24px;
+    margin-top: 40px; /* Increase top margin for space */
+  }
+
+  .inputArea {
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 60px; /* Ensure space from the bottom */
+  }
+
+  .sendButton {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .fileUploadLabel {
+    margin-top: 0;
+  }
+
+  .chatArea {
+    padding: 5px;
+    margin-bottom: 80px; /* Ensure space from the bottom */
+  }
 }

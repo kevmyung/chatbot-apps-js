@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, FormEvent, KeyboardEvent } from 'react';
 import usePasteHandler from './usePasteHandler';
 import useFileHandler from './useFileHandler';
-import { sendMessageToApi } from '../utils/api';
+import { sendMessageToApi, searchApi } from '../utils/api';
 
 export interface Message {
   text: string;
@@ -11,7 +11,7 @@ export interface Message {
   documentNames?: string[];
 }
 
-export default function useChat(settings) {
+export default function useChat(settings, searchSettings) { // searchSettings 인자를 추가합니다.
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -52,10 +52,15 @@ export default function useChat(settings) {
     inputRef.current!.innerHTML = '';
     setFiles([]);
     setIsLoading(true);
-    setErrorMessage(null);  // 에러 메시지 초기화
+    setErrorMessage(null); 
 
     try {
-      const response = await sendMessageToApi(text, imageUrl, files, settings);
+      let ragResult = null;
+      if (settings.chatMode === 'RAG') {
+        ragResult = await searchApi(text, settings.chatMode, searchSettings);
+      }
+
+      const response = await sendMessageToApi(text, imageUrl, files, settings, ragResult);
 
       if (response.ok) {
         const reader = response.body?.getReader();

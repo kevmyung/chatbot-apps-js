@@ -1,0 +1,186 @@
+/* Overlay for the popup */
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Main popup container */
+.popup {
+  background: #333;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  color: white;
+  font-family: 'Nunito', sans-serif;
+}
+
+/* Configuration box for settings */
+.configBox {
+  background: #444;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+/* Dropzone area */
+.dropzone {
+  border: 2px dashed #007aff;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+/* Button group container */
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Close, Process, Unselect, Initialize buttons */
+.closeButton, .processButton, .unselectButton, .initializeButton {
+  padding: 10px 20px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Close and Process button styling */
+.closeButton, .processButton {
+  background-color: #007aff;
+}
+
+/* Hover effect for Close and Process buttons */
+.closeButton:hover, .processButton:hover {
+  background-color: #0056b3;
+}
+
+/* Unselect button styling */
+.unselectButton {
+  background-color: #666;
+}
+
+/* Hover effect for Unselect button */
+.unselectButton:hover {
+  background-color: #444;
+}
+
+/* Initialize button styling */
+.initializeButton {
+  background-color: #ff4d4d;
+}
+
+/* Hover effect for Initialize button */
+.initializeButton:hover {
+  background-color: #d32f2f;
+}
+
+/* Input group container */
+.inputGroup {
+  margin-bottom: 20px;
+}
+
+/* Input group labels */
+.inputGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Input group select fields */
+.inputGroup select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #444;
+  color: white;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+}
+
+/* Focus effect for select fields */
+.inputGroup select:focus {
+  outline: none;
+  border-color: #007aff;
+}
+
+/* Disabled button styling */
+.disabledButton {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Loader styling */
+.loader {
+  margin-top: 10px;
+  text-align: center;
+  color: white;
+  font-size: 14px;
+}
+
+/* Error message styling */
+.errorMessage {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #ff4d4d;
+  color: white;
+  border-radius: 5px;
+}
+
+/* Success message styling */
+.successMessage {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #28a745;
+  color: white;
+  border-radius: 5px;
+}
+
+/* Apply and Set Default button styling */
+.applyButton, .setDefaultButton {
+  padding: 10px 20px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+}
+
+/* Apply button styling */
+.applyButton {
+  background-color: #28a745;
+}
+
+/* Hover effect for Apply button */
+.applyButton:hover {
+  background-color: #218838;
+}
+
+/* Set Default button styling */
+.setDefaultButton {
+  background-color: #666;
+}
+
+/* Hover effect for Set Default button */
+.setDefaultButton:hover {
+  background-color: #e0a800;
+}
+
+/* Margin top class for spacing */
+.marginTop {
+  margin-top: 10px;
+}

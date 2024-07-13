@@ -6,15 +6,24 @@ import ChatArea from '../components/ChatArea';
 import InputArea from '../components/InputArea';
 import useChat from '../hooks/useChat';
 import useNewChat from '../hooks/useNewChat';
-import { FaRegEdit, FaCog } from 'react-icons/fa';
+import { FaRegEdit, FaCog, FaSearch } from 'react-icons/fa';
 import SettingsPopup from '../components/SettingsPopup';
+import SearchPopup from '../components/SearchPopup';
 
 export default function Home() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isSearchPopupOpen, setIsSearchPopupOpen] = useState(false);
   const [settings, setSettings] = useState({
     region: 'us-east-1',
     model: 'anthropic.claude-3-sonnet-20240229-v1:0',
-    systemPrompt: 'You are a helpful assistant'
+    systemPrompt: 'You are a helpful assistant',
+    chatMode: 'Normal'
+  });
+
+  const [searchSettings, setSearchSettings] = useState({
+    embeddingModel: 'amazon.titan-embed-text-v2:0',
+    embRegion: 'us-east-1',
+    vectorStore: 'OpenSearch'
   });
 
   const {
@@ -28,7 +37,7 @@ export default function Home() {
     removeFile,
     resetMessages,
     errorMessage
-  } = useChat(settings);
+  } = useChat(settings, searchSettings);
 
   const { handleNewChat } = useNewChat(resetMessages);
 
@@ -41,8 +50,20 @@ export default function Home() {
   };
 
   const handleSettingsSave = (newSettings) => {
-    setSettings(newSettings);
+    setSettings(prevSettings => ({ ...prevSettings, ...newSettings }));
     setIsSettingsOpen(false);
+  };
+
+  const handleSearchPopupOpen = () => {
+    setIsSearchPopupOpen(true);
+  };
+
+  const handleSearchPopupClose = () => {
+    setIsSearchPopupOpen(false);
+  };
+
+  const handleSearchSettingsSave = (newSearchSettings) => {
+    setSearchSettings(prevSettings => ({ ...prevSettings, ...newSearchSettings }));
   };
 
   return (
@@ -51,6 +72,9 @@ export default function Home() {
       <div className={styles.buttonContainer}>
         <button className={styles.settingsButton} onClick={handleSettingsOpen}>
           <FaCog className={styles.icon} size={24} />
+        </button>
+        <button className={styles.searchButton} onClick={handleSearchPopupOpen}>
+          <FaSearch className={styles.icon} size={24} />
         </button>
         <button className={styles.newChatButton} onClick={handleNewChat}>
           <FaRegEdit className={styles.icon} size={24} />
@@ -61,12 +85,19 @@ export default function Home() {
       <InputArea
         inputRef={inputRef}
         isLoading={isLoading}
-        handleSubmit={handleSubmit}
+        handleSubmit={(e) => handleSubmit(e, files)}
         files={files}
         handleFileChange={handleFileChange}
         removeFile={removeFile}
       />
       {isSettingsOpen && <SettingsPopup settings={settings} onSave={handleSettingsSave} onClose={handleSettingsClose} />}
+      {isSearchPopupOpen && (
+        <SearchPopup
+          onClose={handleSearchPopupClose}
+          searchSettings={searchSettings}
+          onSave={handleSearchSettingsSave}
+        />
+      )}
     </div>
   );
 }
