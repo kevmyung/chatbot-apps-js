@@ -7,12 +7,12 @@ This is a Next.js-based web frontend application for a chatbot that leverages th
 
 ### Basic Features
 - **Next.js Web Frontend**: Built using the powerful Next.js framework.
-![Basic chat](./images/Basic-chat.png)
+        ![Basic chat](./images/Basic-chat.png)
 - **Bedrock Converse API**: Utilizes the Bedrock Converse API for chatbot model invocation.
 
 ### Additional Features
 - **Multi-modal Chat**: Supports multimodal interactions (File upload / Clipboard).
-![Multimodal chat](./images/Multimodal-chat.png)
+        ![Multimodal chat](./images/Multimodal-chat.png)
 - **Environment Configuration**: Easy setup and configuration of the environment.
     - Chat Mode Selection : Normal / RAG / Web Search / Auto (Work In progress)
 - **In-Memory Chat History**: Maintains chat history in memory to preserve the chat context.
@@ -21,9 +21,8 @@ This is a Next.js-based web frontend application for a chatbot that leverages th
         ![RAG ingestion](./images/RAG-ingestion.png)   
     - Chat with RAG
         ![RAG chat](./images/RAG-chat.png)   
-- **Web Search**: Delivers real-time, factual results with a web search retriever.
-        
-    ![Web search chat](./images/Web-search-chat.png)   
+- **Web Search**: Delivers real-time, factual results with a web search retriever.        
+        ![Web search chat](./images/Web-search-chat.png)   
 
 
 
