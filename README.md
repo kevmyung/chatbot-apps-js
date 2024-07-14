@@ -11,9 +11,10 @@ This is a Next.js-based web frontend application for a chatbot that leverages th
 - **Bedrock Converse API**: Utilizes the Bedrock Converse API for chatbot model invocation.
 
 ### Additional Features
-- **Multimodal Chat**: Supports multimodal interactions (File upload / Clipboard).
+- **Multi-modal Chat**: Supports multimodal interactions (File upload / Clipboard).
 ![Multimodal chat](./images/Multimodal-chat.png)
 - **Environment Configuration**: Easy setup and configuration of the environment.
+    - Chat Mode Selection : Normal / RAG / Web Search / Auto (Work In progress)
 - **In-Memory Chat History**: Maintains chat history in memory to preserve the chat context.
 - **RAG (Retrieval-Augmented Generation)**: Combines the LLM with an external knowledge base.
     - Ingestion of Knowledge Base (PDF)

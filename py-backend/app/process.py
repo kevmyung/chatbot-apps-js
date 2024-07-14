@@ -10,22 +10,21 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-def load_and_split(file_path):
-    docs = []
+def process_document(file_path, vector_search):
     logger.info(f"Loading file: {file_path}")
     loader = PyPDFLoader(file_path)
     pages = loader.load()
-    docs.extend(pages)
 
     logger.info("Splitting documents")
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=200,
+        chunk_size=1500,
+        chunk_overlap=300,
         length_function=len,
         is_separator_regex=False,
     )
-    chunks = text_splitter.split_documents(docs)
-    return chunks
+    chunks = text_splitter.split_documents(pages)
+    vector_search.add_documents(documents=chunks, bulk_size = 2000)
+
 
 def main():
     model = sys.argv[1]
@@ -40,17 +39,16 @@ def main():
     index_name = f'docs-{suffix}'
 
     embed_model = BedrockEmbeddings(model_id=model, region_name=region)
+    if vector_store == "OpenSearch":
+        logger.info(f"Using OpenSearch for index: {index_name}")
+        os_client = OpenSearchClient(index_name)
+        vector_search = os_client.get_vector_store(embed_model)
+    else:
+        logger.error("Invalid Vector Store.")
 
     for file_path in file_paths:
-        chunks = load_and_split(file_path)
-        if vector_store == "OpenSearch":
-            logger.info(f"Using OpenSearch for index: {index_name}")
-            os_client = OpenSearchClient(index_name)
-            vector_search = os_client.get_vector_store(embed_model)
-            vector_search.add_documents(documents=chunks, bulk_size = 2000)
-        else:
-            logger.error("Invalid Vector Store.")
-
+        process_document(file_path, vector_search)
+        
     logger.info("Process Completed.")
 
 if __name__ == "__main__":
