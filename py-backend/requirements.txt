@@ -1,0 +1,5 @@
+langchain-community
+langchain
+boto3
+tavily-python
+opensearch0py

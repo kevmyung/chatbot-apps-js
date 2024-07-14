@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, FormEvent, KeyboardEvent } from 'react';
+import { useState, useRef, FormEvent, KeyboardEvent } from 'react';
 import usePasteHandler from './usePasteHandler';
 import useFileHandler from '../hooks/useFileHandler';
-import { sendMessageToApi, searchApi } from '../utils/api';
-import axios from 'axios';
+import { sendMessageToApi, searchApi, websearchApi } from '../utils/api';
+import useMessageHandler from './useMessageHandler';
 
 export interface Message {
   id: number;
@@ -14,17 +14,19 @@ export interface Message {
 }
 
 export default function useChat(settings, searchSettings) {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const {
+    messages,
+    messagesEndRef,
+    addMessage,
+    updateMessage,
+    resetMessages
+  } = useMessageHandler();
+
   const [isLoading, setIsLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const inputRef = useRef<HTMLDivElement>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
   const { files, setFiles, handleFileChange, removeFile } = useFileHandler();
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
 
   usePasteHandler(inputRef);
 
@@ -50,30 +52,31 @@ export default function useChat(settings, searchSettings) {
 
     const newMessageId = Date.now();
 
-    setMessages(prev => [
-      ...prev,
-      { id: newMessageId, text, isUser: true, imageUrl, documentUrls: fileUrls, documentNames: fileNames }
-    ]);
+    addMessage({ id: newMessageId, text, isUser: true, imageUrl, documentUrls: fileUrls, documentNames: fileNames });
     inputRef.current!.innerHTML = '';
     setFiles([]);
     setIsLoading(true);
     setIsSearching(true);
-    setErrorMessage(null); 
+    setErrorMessage(null);
 
     try {
       let ragResult = null;
+      let websearchResult = null;
       const assistantMessageId = newMessageId + 1;
-      
+
       if (settings.chatMode === 'RAG') {
         ragResult = await searchApi(text, settings.chatMode, searchSettings);
-        setMessages(prev => [...prev, { id: assistantMessageId, text: 'Done!', isUser: false }]);
+        addMessage({ id: assistantMessageId, text: 'Done!', isUser: false });
+      } else if (settings.chatMode === 'Web Search') {
+        websearchResult = await websearchApi(text, settings.chatMode, settings.tavilySearchApiKey);
+        addMessage({ id: assistantMessageId, text: 'Done!', isUser: false });
       } else {
-        setMessages(prev => [...prev, { id: assistantMessageId, text: '', isUser: false }]);
+        addMessage({ id: assistantMessageId, text: '', isUser: false });
       }
-      
+
       setIsSearching(false);
 
-      const response = await sendMessageToApi(text, imageUrl, files, settings, ragResult);
+      const response = await sendMessageToApi(text, imageUrl, files, settings, ragResult || websearchResult);
 
       if (response.ok) {
         const reader = response.body?.getReader();
@@ -96,11 +99,7 @@ export default function useChat(settings, searchSettings) {
                 const parsedChunk = JSON.parse(jsonText);
                 botResponse += parsedChunk.text;
 
-                setMessages(prev => 
-                  prev.map(message => 
-                    message.id === assistantMessageId ? { ...message, text: botResponse } : message
-                  )
-                );
+                updateMessage(assistantMessageId, botResponse);
               } catch (error) {
                 console.error('JSON parsing error:', error);
               }
@@ -120,12 +119,6 @@ export default function useChat(settings, searchSettings) {
       setIsLoading(false);
       setIsSearching(false);
     }
-  };
-
-  const resetMessages = async () => {
-    setMessages([]);
-    setErrorMessage(null);
-    await axios.post('/api/chat', { reset: true });
   };
 
   return {

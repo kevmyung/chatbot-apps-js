@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export async function sendMessageToApi(text: string, imageUrl: string, files: File[] | null, settings, ragResult: any = null) {
+export async function sendMessageToApi(text: string, imageUrl: string, files: File[] | null, settings, searchResult: any = null) {
   const messages = [{ role: 'user', content: [] as any[] }];
 
   if (!text && files && files.length > 0) {
@@ -8,8 +8,8 @@ export async function sendMessageToApi(text: string, imageUrl: string, files: Fi
   }
 
   if (text) {
-    if (ragResult) {
-      const contextContent = ragResult.map((item: any) => item.content).join('\n---\n');
+    if (searchResult) {
+      const contextContent = searchResult.map((item: any) => item.content).join('\n---\n');
       const formattedRagResult = `Using the context below, answer the User Question. <context>\n${contextContent}\n</context>\n\nQuestion: ${text}`;
       messages[0].content.push({ text: formattedRagResult });
     } else {
@@ -87,6 +87,28 @@ export async function searchApi(text: string, chatMode: string, searchSettings: 
       }
     });
     const data = JSON.parse(response.data.output);
+    return data;
+  } catch (error) {
+    console.error('Error calling search API:', error);
+    throw error;
+  }
+}
+
+export async function websearchApi(text: string, chatMode: string, tavilySearchApiKey: string) {
+  try {
+    const formData = new FormData();
+    formData.append('text', text);
+    formData.append('chat_mode', chatMode);
+    formData.append('tavily_search_key', tavilySearchApiKey);
+
+    const response = await axios.post('/api/websearch', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+
+    const data = JSON.parse(response.data.output);
+    console.log(data);
     return data;
   } catch (error) {
     console.error('Error calling search API:', error);

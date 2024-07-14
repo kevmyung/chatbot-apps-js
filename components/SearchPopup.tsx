@@ -21,6 +21,7 @@ export default function SearchPopup({ onClose, searchSettings, onSave }: SearchP
   return (
     <div className={styles.popupOverlay}>
       <div className={styles.popup}>
+        <div className={styles.popupTitle}>Search Settings</div>
         <SearchSettings searchSettings={searchSettings} onSave={onSave} />
         <FileUpload searchSettings={searchSettings} onClose={onClose} />
       </div>

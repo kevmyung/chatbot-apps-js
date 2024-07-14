@@ -1,4 +1,4 @@
-/* Overlay for the popup */
+/* SettingsPopup.module.css */
 .popupOverlay {
   position: fixed;
   top: 0;
@@ -12,23 +12,19 @@
   z-index: 1000;
 }
 
-/* Main popup container */
 .popup {
   background: #333;
   padding: 20px;
   border-radius: 8px;
   width: 400px;
-  height: 500px;  /* Adjusted height */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   font-family: 'Nunito', sans-serif;
 }
 
-/* Input group container */
 .inputGroup {
   margin-bottom: 15px;
 }
 
-/* Input group labels */
 .inputGroup label {
   display: block;
   margin-bottom: 5px;
@@ -37,7 +33,6 @@
   font-size: 16px;
 }
 
-/* Input group select fields */
 .inputGroup select,
 .inputGroup textarea,
 .inputGroup input {
@@ -52,14 +47,13 @@
   font-size: 16px;
 }
 
-/* Button group container */
 .buttonGroup {
   display: flex;
   justify-content: space-between;
 }
 
-/* Save and Cancel buttons */
-.saveButton, .cancelButton {
+.saveButton,
+.cancelButton {
   padding: 10px 20px;
   border: none;
   border-radius: 4px;
@@ -87,7 +81,15 @@
   background-color: #999;
 }
 
-/* Margin top class for spacing */
 .marginTop {
   margin-top: 10px;
+}
+
+.required {
+  color: red;
+}
+
+.error {
+  color: red;
+  margin-bottom: 15px;
 }

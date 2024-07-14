@@ -18,7 +18,7 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     const { messages, userId, settings, reset } = req.body;
     if (reset) {
-      await chatPromptMemory.clear()
+      await chatPromptMemory.clear();
       return res.status(200).json({ message: 'Memory reset successful' });
     }
 

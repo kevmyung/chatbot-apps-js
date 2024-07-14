@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../app/SettingsPopup.module.css';
 
 export default function SettingsPopup({ settings, onSave, onClose }) {
@@ -6,11 +6,40 @@ export default function SettingsPopup({ settings, onSave, onClose }) {
   const [model, setModel] = useState(settings.model);
   const [systemPrompt, setSystemPrompt] = useState(settings.systemPrompt);
   const [chatMode, setChatMode] = useState(settings.chatMode || 'Normal');
+  const [tavilySearchApiKey, setTavilySearchApiKey] = useState(settings.tavilySearchApiKey || '');
+  const [cohereRerankerApiKey, setCohereRerankerApiKey] = useState(settings.cohereRerankerApiKey || '');
+  const [error, setError] = useState('');
 
   const handleSave = () => {
-    const newSettings = { region, model, systemPrompt, chatMode };
+    if (chatMode === 'Web Search' && !tavilySearchApiKey) {
+      setError('Tavily Search API Key is required for Web Search mode.');
+      return;
+    }
+
+    const newSettings = {
+      region,
+      model,
+      systemPrompt,
+      chatMode,
+      tavilySearchApiKey,
+      cohereRerankerApiKey,
+    };
     onSave(newSettings);
   };
+
+  useEffect(() => {
+    setTavilySearchApiKey(settings.tavilySearchApiKey || '');
+    setCohereRerankerApiKey(settings.cohereRerankerApiKey || '');
+  }, [settings.tavilySearchApiKey, settings.cohereRerankerApiKey]);
+
+  useEffect(() => {
+    if (chatMode !== 'Web Search') {
+      setTavilySearchApiKey('');
+    }
+    if (chatMode !== 'RAG') {
+      setCohereRerankerApiKey('');
+    }
+  }, [chatMode]);
 
   return (
     <div className={styles.popupOverlay}>
@@ -34,7 +63,7 @@ export default function SettingsPopup({ settings, onSave, onClose }) {
           <textarea
             value={systemPrompt}
             onChange={(e) => setSystemPrompt(e.target.value)}
-            rows={8}  
+            rows={8}
           />
         </div>
         <div className={styles.inputGroup}>
@@ -46,6 +75,27 @@ export default function SettingsPopup({ settings, onSave, onClose }) {
             <option value="Auto">Auto</option>
           </select>
         </div>
+        {chatMode === 'Web Search' && (
+          <div className={styles.inputGroup}>
+            <label>Tavily Search API Key <span className={styles.required}>*</span></label>
+            <input
+              type="text"
+              value={tavilySearchApiKey}
+              onChange={(e) => setTavilySearchApiKey(e.target.value)}
+            />
+          </div>
+        )}
+        {chatMode === 'RAG' && (
+          <div className={styles.inputGroup}>
+            <label>Cohere Reranker API Key (optional)</label>
+            <input
+              type="text"
+              value={cohereRerankerApiKey}
+              onChange={(e) => setCohereRerankerApiKey(e.target.value)}
+            />
+          </div>
+        )}
+        {error && <div className={styles.error}>{error}</div>}
         <div className={styles.buttonGroup}>
           <button className={styles.saveButton} onClick={handleSave}>Save</button>
           <button className={styles.cancelButton} onClick={onClose}>Cancel</button>

@@ -10,14 +10,25 @@ import { FaRegEdit, FaCog, FaSearch } from 'react-icons/fa';
 import SettingsPopup from '../components/SettingsPopup';
 import SearchPopup from '../components/SearchPopup';
 
+interface Settings {
+  region: string;
+  model: string;
+  systemPrompt: string;
+  chatMode: string;
+  tavilySearchApiKey?: string;
+  cohereRerankerApiKey?: string;
+}
+
 export default function Home() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSearchPopupOpen, setIsSearchPopupOpen] = useState(false);
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<Settings>({
     region: 'us-east-1',
     model: 'anthropic.claude-3-sonnet-20240229-v1:0',
     systemPrompt: 'You are a helpful assistant',
-    chatMode: 'Normal'
+    chatMode: 'Normal',
+    tavilySearchApiKey: '',
+    cohereRerankerApiKey: ''
   });
 
   const [searchSettings, setSearchSettings] = useState({
@@ -50,8 +61,9 @@ export default function Home() {
     setIsSettingsOpen(false);
   };
 
-  const handleSettingsSave = (newSettings) => {
+  const handleSettingsSave = (newSettings: Partial<Settings>) => {
     setSettings(prevSettings => ({ ...prevSettings, ...newSettings }));
+    console.log('Updated settings:', { ...settings, ...newSettings }); 
     setIsSettingsOpen(false);
   };
 
