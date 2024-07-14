@@ -17,6 +17,7 @@ This is a Next.js-based web frontend application for a chatbot that leverages th
 - **In-Memory Chat History**: Maintains chat history in memory for quick access.
 - **RAG (Retrieval-Augmented Generation)**: Combines the LLM with an external knowledge base.
     - Ingestion of Knowledge Base (PDF)
+        ![RAG ingestion](./images/RAG-ingestion.png)   
     - Chat with RAG
         ![RAG chat](./images/RAG-chat.png)   
 - **Web Search**: Delivers real-time, factual results with a web search retriever.
