@@ -14,7 +14,7 @@ This is a Next.js-based web frontend application for a chatbot that leverages th
 - **Multimodal Chat**: Supports multimodal interactions (File upload / Clipboard).
 ![Multimodal chat](./images/Multimodal-chat.png)
 - **Environment Configuration**: Easy setup and configuration of the environment.
-- **In-Memory Chat History**: Maintains chat history in memory for quick access.
+- **In-Memory Chat History**: Maintains chat history in memory to preserve the chat context.
 - **RAG (Retrieval-Augmented Generation)**: Combines the LLM with an external knowledge base.
     - Ingestion of Knowledge Base (PDF)
         ![RAG ingestion](./images/RAG-ingestion.png)   
