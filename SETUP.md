@@ -24,6 +24,10 @@ Navigate to the project directory and run the following command to install all n
 npm install
 ```
 
+```bash
+pip install -r py-backend/requirements.txt
+```
+
 
 ## Configuration
 

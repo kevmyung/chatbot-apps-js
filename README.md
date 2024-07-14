@@ -5,16 +5,25 @@
 
 This is a Next.js-based web frontend application for a chatbot that leverages the Bedrock Converse API for model invocation. The application includes several key features:
 
-![Basic Interface](./images/basic.png)
-
 ### Basic Features
 - **Next.js Web Frontend**: Built using the powerful Next.js framework.
+![Basic chat](./images/Basic-chat.png)
 - **Bedrock Converse API**: Utilizes the Bedrock Converse API for chatbot model invocation.
 
 ### Additional Features
 - **Multimodal Chat**: Supports multimodal interactions (File upload / Clipboard).
+![Multimodal chat](./images/Multimodal-chat.png)
 - **Environment Configuration**: Easy setup and configuration of the environment.
 - **In-Memory Chat History**: Maintains chat history in memory for quick access.
+- **RAG (Retrieval-Augmented Generation)**: Combines the LLM with an external knowledge base.
+    - Ingestion of Knowledge Base (PDF)
+    - Chat with RAG
+        ![RAG chat](./images/RAG-chat.png)   
+- **Web Search**: Delivers real-time, factual results with a web search retriever.
+        
+    ![Web search chat](./images/Web-search-chat.png)   
+
+
 
 ## File Structure
 
@@ -47,21 +56,21 @@ chatbot-apps-js/
 └── SETUP.md
 ```
 
-app/page.tsx : This file is the main entry point of the application. It handles the rendering of the main chat interface and incorporates various components and hooks.
+- app/page.tsx : This file is the main entry point of the application. It handles the rendering of the main chat interface and incorporates various components and hooks.
 
-app/SettingsPopup.module.css and app/ChatInterface.module.css : These CSS modules provide styling for the settings popup and chat interface respectively.
+- app/SettingsPopup.module.css and app/ChatInterface.module.css : These CSS modules provide styling for the settings popup and chat interface respectively.
 
-components/: This directory contains reusable React components used throughout the application.
+- components/: This directory contains reusable React components used throughout the application.
 
-hooks/ : Custom hooks used to manage state and side effects in the application.
+- hooks/ : Custom hooks used to manage state and side effects in the application.
 
-pages/ : Next.js pages directory for defining the application’s routes (defines an API endpoint).
+- pages/ : Next.js pages directory for defining the application’s routes (defines an API endpoint).
 
-utils/ : Utility functions and helpers used across the application.
+- utils/ : Utility functions and helpers used across the application.
 
-py-backend/app/app.py : The main entry point for the FastAPI backend, handling API requests and routing.
+- py-backend/app/app.py : The main entry point for the FastAPI backend, handling API requests and routing.
 
-py-backend/app/libs/ : Contains custom helper libraries for backend services.
+- py-backend/app/libs/ : Contains custom helper libraries for backend services.
 
 
 ## Getting Started
