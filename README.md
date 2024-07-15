@@ -57,21 +57,21 @@ chatbot-apps-js/
 └── SETUP.md
 ```
 
-- app/page.tsx : This file is the main entry point of the application. It handles the rendering of the main chat interface and incorporates various components and hooks.
+- `app/page.tsx` : This file is the main entry point of the application. It handles the rendering of the main chat interface and incorporates various components and hooks.
 
-- app/SettingsPopup.module.css and app/ChatInterface.module.css : These CSS modules provide styling for the settings popup and chat interface respectively.
+- `app/*.css` : These CSS modules provide styling for the settings popup and chat interface respectively.
 
-- components/: This directory contains reusable React components used throughout the application.
+- `components/*`: This directory contains reusable React components used throughout the application.
 
-- hooks/ : Custom hooks used to manage state and side effects in the application.
+- `hooks/*` : Custom hooks used to manage state and side effects in the application.
 
-- pages/ : Next.js pages directory for defining the application’s routes (defines an API endpoint).
+- `pages/*` : Next.js pages directory for defining the application’s routes (defines an API endpoint).
 
-- utils/ : Utility functions and helpers used across the application.
+- `utils/*` : Utility functions and helpers used across the application.
 
-- py-backend/app/app.py : The main entry point for the FastAPI backend, handling API requests and routing.
+- `py-backend/app/app.py` : The main entry point for the FastAPI backend, handling API requests and routing.
 
-- py-backend/app/libs/ : Contains custom helper libraries for backend services.
+- `py-backend/app/libs/` : Contains custom helper libraries for backend services.
 
 
 ## Getting Started
