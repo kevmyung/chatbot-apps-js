@@ -38,46 +38,73 @@ The project is organized as follows:
 
 ```
 chatbot-apps-js/
-├── app/
-│   ├── page.tsx
-│   ├── ...
+├── .next/
 ├── components/ 
-│   ├── ...
+│   ├── ChatArea.tsx
+│   ├── ChatMessage.tsx
+│   ├── CopyButton.tsx
+│   ├── FileUpload.tsx
+│   ├── InputArea.tsx
+│   ├── SearchPopup.tsx
+│   ├── SearchSettings.tsx
+│   ├── SettingsPopup.tsx
 ├── hooks/
+│   ├── useChat.ts
+│   ├── useFileHandler.ts
+│   ├── useMessageHandler.ts
+│   ├── useNewChat.ts
+│   ├── usePasteHandler.ts
+│   ├── useSearchHandler.ts
+├── images/
+│   ├── ...
+├── node_modules/
 │   ├── ...
 ├── pages/
-│   ├── ...
-├── utils/
-│   ├── ...
-├── public/
-│   ├── ...
+│   ├── api/
+│   ├── _app.tsx
+│   ├── _document.js
+│   ├── index.tsx
+│   ├── layout.tsx
 ├── py-backend/
 │   ├── app/
 │   │   ├── app.py
-│   │   ├── ...
+│   │   ├── initialize.py
+│   │   ├── process.py
+│   │   ├── search.py
+│   │   ├── websearch.py
 │   │   ├── libs/
-│   │   │   ├── ...
-│   │   ├── ...
+│   │   │   ├── opensearch_connector.py
+│   │   │   ├── opensearch.py
+├── styles/
+│   ├── ChatInterface.module.css
+│   ├── globals.css
+│   ├── SearchPopup.module.css
+│   ├── SettingsPopup.module.css
+├── utils/
+│   ├── api.ts
+├── vectordb/
+├── .env.example
 ├── package.json
 ├── README.md
-└── SETUP.md
+├── SETUP.md
 ```
 
-- `app/page.tsx` : This file is the main entry point of the application. It handles the rendering of the main chat interface and incorporates various components and hooks.
+## Explaination
 
-- `app/*.css` : These CSS modules provide styling for the settings popup and chat interface respectively.
-
-- `components/*`: This directory contains reusable React components used throughout the application.
-
-- `hooks/*` : Custom hooks used to manage state and side effects in the application.
-
-- `pages/*` : Next.js pages directory for defining the application’s routes (defines an API endpoint).
-
-- `utils/*` : Utility functions and helpers used across the application.
-
-- `py-backend/app/app.py` : The main entry point for the FastAPI backend, handling API requests and routing.
-
-- `py-backend/app/libs/` : Contains custom helper libraries for backend services.
+- `components/`: Reusable React components used throughout the application.
+- `hooks/`: Custom hooks used to manage state and side effects in the application.
+- `pages/`: Contains the main application files. This directory is also used for defining the application’s routes and API endpoints. 
+- `public/`: Static files served by the Next.js application.
+- `py-backend/`: The Python backend directory containing the FastAPI application and related scripts.
+  - `app/`: Main FastAPI application and related scripts.
+  - `libs/`: Custom helper libraries for backend services.
+- `styles/`: CSS modules for styling the application.
+- `utils/`: Utility functions and helpers used across the application.
+- `vectordb/`: Directory for vector databases used in the application.
+- `.env.example`: Example environment variables file. (should be given with `.env` for your usage.)
+- `package.json`: NPM package file.
+- `README.md`: Project overview and instructions.
+- `SETUP.md`: Detailed setup instructions.
 
 
 ## Getting Started
