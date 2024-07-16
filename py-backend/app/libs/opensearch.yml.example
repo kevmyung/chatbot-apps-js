@@ -1,0 +1,34 @@
+opensearch-auth:
+  domain_endpoint: "https://{your endpoint url}"
+  user_id: "your-user-name"
+  user_password: "your-password"
+
+settings:
+  index.knn: true
+  index.knn.algo_param.ef_search: 512
+
+mappings-rag:
+  properties:
+    metadata:
+      properties:
+        source:
+          type: keyword
+        type:
+          type: keyword
+        timestamp:
+          type: date
+        emb_model:
+          type: keyword
+    text:
+      type: text
+      analyzer: nori
+    vector_field:
+      type: knn_vector
+      dimension: 1024
+      method:
+        engine: faiss
+        name: hnsw
+        parameters:
+          ef_construction: 512
+          m: 16
+        space_type: l2
