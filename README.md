@@ -18,7 +18,7 @@ This is a Next.js-based web frontend application for a chatbot that leverages th
 - **In-Memory Chat History**: Maintains chat history in memory to preserve the chat context.
 - **RAG (Retrieval-Augmented Generation)**: Combines the LLM with an external knowledge base.
     - Vector DB Selection
-        - ChromaDB (Default) : Utilizes Local Storage for vector storage.
+        - ChromaDB (Default) : Utilizes local storage space.
         - Amazon OpenSearch Service : Domain endpoint and host auth. info should be defined in `py-backend/app/libs/opensearch.yml`.
     - Ingestion of Knowledge Base (PDF)
         ![RAG ingestion](./images/RAG-ingestion.png)   
@@ -27,7 +27,7 @@ This is a Next.js-based web frontend application for a chatbot that leverages th
         - Reranker : Cohere API key should be provided via `.env`
         ![RAG chat](./images/RAG-chat.png)   
 - **Web Search**: Delivers real-time, factual results with a web search retriever.        
-        - Tavily Web Search API key should be provided via `.env`
+    - Tavily Web Search API key should be provided via `.env`
         ![Web search chat](./images/Web-search-chat.png)   
 
 
