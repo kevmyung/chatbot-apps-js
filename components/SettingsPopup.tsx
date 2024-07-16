@@ -1,45 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import styles from '../app/SettingsPopup.module.css';
+import styles from '../styles/SettingsPopup.module.css';
+
+const tavilySearchApiKey = process.env.TAVILY_SEARCH_API_KEY;
+const cohereRerankerApiKey = process.env.COHERE_RERANKER_API_KEY;
 
 export default function SettingsPopup({ settings, onSave, onClose }) {
   const [region, setRegion] = useState(settings.region);
   const [model, setModel] = useState(settings.model);
   const [systemPrompt, setSystemPrompt] = useState(settings.systemPrompt);
   const [chatMode, setChatMode] = useState(settings.chatMode || 'Normal');
-  const [tavilySearchApiKey, setTavilySearchApiKey] = useState(settings.tavilySearchApiKey || '');
-  const [cohereRerankerApiKey, setCohereRerankerApiKey] = useState(settings.cohereRerankerApiKey || '');
+  const [useRerank, setUseRerank] = useState(settings.useRerank || false);
   const [error, setError] = useState('');
 
   const handleSave = () => {
     if (chatMode === 'Web Search' && !tavilySearchApiKey) {
-      setError('Tavily Search API Key is required for Web Search mode.');
+      setError('Tavily Search API Key is required for Web Search mode. Please set it in the .env file.');
       return;
     }
-
+    if (chatMode === 'RAG' && useRerank && !cohereRerankerApiKey) {
+      setError('Cohere Reranker API Key is required for RAG mode with Rerank enabled. Please set it in the .env file.');
+      return;
+    }
     const newSettings = {
       region,
       model,
       systemPrompt,
       chatMode,
-      tavilySearchApiKey,
-      cohereRerankerApiKey,
+      useRerank,
+      cohereRerankerApiKey: useRerank ? cohereRerankerApiKey : null
     };
     onSave(newSettings);
   };
 
   useEffect(() => {
-    setTavilySearchApiKey(settings.tavilySearchApiKey || '');
-    setCohereRerankerApiKey(settings.cohereRerankerApiKey || '');
-  }, [settings.tavilySearchApiKey, settings.cohereRerankerApiKey]);
-
-  useEffect(() => {
-    if (chatMode !== 'Web Search') {
-      setTavilySearchApiKey('');
+    if (chatMode !== 'Web Search' && !(chatMode === 'RAG' && useRerank)) {
+      setError('');
     }
-    if (chatMode !== 'RAG') {
-      setCohereRerankerApiKey('');
-    }
-  }, [chatMode]);
+  }, [chatMode, useRerank]);
 
   return (
     <div className={styles.popupOverlay}>
@@ -75,24 +72,20 @@ export default function SettingsPopup({ settings, onSave, onClose }) {
             <option value="Auto">Auto</option>
           </select>
         </div>
-        {chatMode === 'Web Search' && (
-          <div className={styles.inputGroup}>
-            <label>Tavily Search API Key <span className={styles.required}>*</span></label>
-            <input
-              type="text"
-              value={tavilySearchApiKey}
-              onChange={(e) => setTavilySearchApiKey(e.target.value)}
-            />
-          </div>
-        )}
         {chatMode === 'RAG' && (
           <div className={styles.inputGroup}>
-            <label>Cohere Reranker API Key (optional)</label>
-            <input
-              type="text"
-              value={cohereRerankerApiKey}
-              onChange={(e) => setCohereRerankerApiKey(e.target.value)}
-            />
+            <div className={styles.checkboxContainer}>
+              <label className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  checked={useRerank}
+                  onChange={(e) => setUseRerank(e.target.checked)}
+                  className={styles.checkbox}
+                />
+                <span className={styles.checkmark}></span>
+                Use Rerank
+              </label>
+            </div>
           </div>
         )}
         {error && <div className={styles.error}>{error}</div>}

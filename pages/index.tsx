@@ -1,7 +1,5 @@
-'use client';
-
 import { useState } from 'react';
-import styles from './ChatInterface.module.css';
+import styles from '../styles/ChatInterface.module.css';
 import ChatArea from '../components/ChatArea';
 import InputArea from '../components/InputArea';
 import useChat from '../hooks/useChat';
@@ -15,27 +13,45 @@ interface Settings {
   model: string;
   systemPrompt: string;
   chatMode: string;
+  useRerank: boolean;
   tavilySearchApiKey?: string;
   cohereRerankerApiKey?: string;
 }
 
-export default function Home() {
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isSearchPopupOpen, setIsSearchPopupOpen] = useState(false);
-  const [settings, setSettings] = useState<Settings>({
+export const getServerSideProps = async () => {
+  const initialSettings: Settings = {
     region: 'us-east-1',
     model: 'anthropic.claude-3-sonnet-20240229-v1:0',
     systemPrompt: 'You are a helpful assistant',
     chatMode: 'Normal',
-    tavilySearchApiKey: '',
-    cohereRerankerApiKey: ''
-  });
-
-  const [searchSettings, setSearchSettings] = useState({
+    useRerank: false,
+    tavilySearchApiKey: process.env.TAVILY_SEARCH_API_KEY || '',
+    cohereRerankerApiKey: process.env.COHERE_RERANKER_API_KEY || ''
+  };
+  const initialSearchSettings = {
     embeddingModel: 'amazon.titan-embed-text-v2:0',
     embRegion: 'us-east-1',
-    vectorStore: 'OpenSearch'
-  });
+    vectorStore: 'Chroma'
+  };
+  return {
+    props: {
+      initialSettings,
+      initialSearchSettings
+    }
+  };
+};
+
+interface HomeProps {
+  initialSettings: Settings;
+  initialSearchSettings: any;
+  error?: string;
+}
+
+export default function Home({ initialSettings, initialSearchSettings, error }: HomeProps) {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isSearchPopupOpen, setIsSearchPopupOpen] = useState(false);
+  const [settings, setSettings] = useState<Settings>(initialSettings);
+  const [searchSettings, setSearchSettings] = useState(initialSearchSettings);
 
   const {
     messages,
@@ -53,40 +69,23 @@ export default function Home() {
 
   const { handleNewChat } = useNewChat(resetMessages);
 
-  const handleSettingsOpen = () => {
-    setIsSettingsOpen(true);
-  };
-
-  const handleSettingsClose = () => {
-    setIsSettingsOpen(false);
-  };
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   const handleSettingsSave = (newSettings: Partial<Settings>) => {
     setSettings(prevSettings => ({ ...prevSettings, ...newSettings }));
-    console.log('Updated settings:', { ...settings, ...newSettings }); 
     setIsSettingsOpen(false);
-  };
-
-  const handleSearchPopupOpen = () => {
-    setIsSearchPopupOpen(true);
-  };
-
-  const handleSearchPopupClose = () => {
-    setIsSearchPopupOpen(false);
-  };
-
-  const handleSearchSettingsSave = (newSearchSettings) => {
-    setSearchSettings(prevSettings => ({ ...prevSettings, ...newSearchSettings }));
   };
 
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Bedrock Chatbot</h1>
       <div className={styles.buttonContainer}>
-        <button className={styles.settingsButton} onClick={handleSettingsOpen}>
+        <button className={styles.settingsButton} onClick={() => setIsSettingsOpen(true)}>
           <FaCog className={styles.icon} size={24} />
         </button>
-        <button className={styles.searchButton} onClick={handleSearchPopupOpen}>
+        <button className={styles.searchButton} onClick={() => setIsSearchPopupOpen(true)}>
           <FaSearch className={styles.icon} size={24} />
         </button>
         <button className={styles.newChatButton} onClick={handleNewChat}>
@@ -103,12 +102,18 @@ export default function Home() {
         handleFileChange={handleFileChange}
         removeFile={removeFile}
       />
-      {isSettingsOpen && <SettingsPopup settings={settings} onSave={handleSettingsSave} onClose={handleSettingsClose} />}
+      {isSettingsOpen && (
+        <SettingsPopup
+          settings={settings}
+          onSave={handleSettingsSave}
+          onClose={() => setIsSettingsOpen(false)}
+        />
+      )}
       {isSearchPopupOpen && (
         <SearchPopup
-          onClose={handleSearchPopupClose}
+          onClose={() => setIsSearchPopupOpen(false)}
           searchSettings={searchSettings}
-          onSave={handleSearchSettingsSave}
+          onSave={(newSearchSettings) => setSearchSettings(prevSettings => ({ ...prevSettings, ...newSearchSettings }))}
         />
       )}
     </div>

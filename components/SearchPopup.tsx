@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from '../app/SearchPopup.module.css';
+import styles from '../styles/SearchPopup.module.css';
 import SearchSettings from './SearchSettings';
 import FileUpload from './FileUpload';
 

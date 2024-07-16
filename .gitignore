@@ -38,6 +38,7 @@ next-env.d.ts
 # Ignore dependency directories
 __pypackages__/
 
+vectordb/chroma/*
 
 # OpenSearch Auth
 py-backend/app/libs/opensearch.yml
@@ -51,3 +52,4 @@ __pycache__/
 
 # macOS
 .DS_Store
+

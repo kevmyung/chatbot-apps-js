@@ -49,10 +49,12 @@ export const useSearchHandler = () => {
     }
   };
 
-  const initializeFiles = async (embeddingModel: string) => {
+  const initializeFiles = async (embeddingModel: string, region: string, vectorStore: string) => {
     try {
       const formData = new FormData();
       formData.append('embedding_model', embeddingModel);
+      formData.append('region', region);
+      formData.append('vector_store', vectorStore);
   
       const response = await axios.post('/api/initialize', formData, {
         headers: {

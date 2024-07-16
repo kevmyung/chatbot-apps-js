@@ -74,22 +74,33 @@ export async function sendMessageToApi(text: string, imageUrl: string, files: Fi
   return response;
 }
 
-export async function searchApi(text: string, chatMode: string, searchSettings: any) {
+export async function searchApi(text: string, chatMode: string, searchSettings: any, cohereRerankerApiKey?: string) {
   try {
     const formData = new FormData();
     formData.append('text', text);
     formData.append('chat_mode', chatMode);
     formData.append('search_settings', JSON.stringify(searchSettings));
+    formData.append('cohere_reranker_api_key', cohereRerankerApiKey || '');
 
     const response = await axios.post('/api/search', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
+    console.log("Response:", response)
     const data = JSON.parse(response.data.output);
     return data;
   } catch (error) {
     console.error('Error calling search API:', error);
+    if (error.response) {
+      console.error('Error response:', error.response.data);
+      console.error('Status:', error.response.status);
+      console.error('Headers:', error.response.headers);
+    } else if (error.request) {
+      console.error('Error request:', error.request);
+    } else {
+      console.error('Error message:', error.message);
+    }
     throw error;
   }
 }

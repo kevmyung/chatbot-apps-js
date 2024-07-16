@@ -14,8 +14,10 @@
   text-align: center;
   color: #ffffff;
   margin-bottom: 10px;
-  font-size: 28px; /* Adjust font size if needed */
-  margin-top: 20px; /* Add margin at the top to create space */
+  font-size: 28px;
+  /* Adjust font size if needed */
+  margin-top: 20px;
+  /* Add margin at the top to create space */
 }
 
 /* Icons style */
@@ -25,13 +27,16 @@
 
 .buttonContainer {
   position: absolute;
-  top: 20px; /* Adjusted to move icons higher */
+  top: 20px;
+  /* Adjusted to move icons higher */
   right: 16px;
   display: flex;
   gap: 8px;
 }
 
-.newChatButton, .settingsButton, .searchButton {
+.newChatButton,
+.settingsButton,
+.searchButton {
   background: none;
   border: none;
   cursor: pointer;
@@ -50,7 +55,8 @@
   background-color: #1e1e1e;
   display: flex;
   flex-direction: column;
-  margin-bottom: 60px; /* Add bottom margin to avoid overlap with URL bar */
+  margin-bottom: 60px;
+  /* Add bottom margin to avoid overlap with URL bar */
 }
 
 /* Message styles */
@@ -114,7 +120,8 @@
   padding: 10px;
   background-color: #1e1e1e;
   border-top: 1px solid #333333;
-  margin-bottom: 20px; /* Ensure space from the bottom */
+  margin-bottom: 20px;
+  /* Ensure space from the bottom */
 }
 
 .fileUploadLabel {
@@ -228,6 +235,59 @@
   margin-left: 10px;
 }
 
+.messageContent pre {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.messageContent code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9em;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.codeBlockWrapper {
+  position: relative;
+  margin: 1em 0;
+  padding: 1em;
+  background: #282a36;
+  border-radius: 0.5em;
+  overflow: auto;
+}
+
+.copyButton {
+  position: absolute;
+  top: 4px;
+  right: 10px;
+  cursor: pointer;
+  background-color: #6272a4;
+  color: #f8f8f2;
+  border: none;
+  border-radius: 3px;
+  font-size: 0.8em;
+  padding: 0.2em 0.5em;
+}
+
+.copyButton:hover {
+  background-color: #7081b9;
+}
+
+.copyButton:active {
+  background-color: #5a6c9f;
+}
+
+.inlineCode {
+  background-color: #44475a;
+  color: #f8f8f2;
+  padding: 0.2em 0.4em;
+  border-radius: 0.3em;
+  font-family: 'Courier New', Courier, monospace;
+  margin: 0 0.2em;
+}
+
 /* Media query for mobile devices */
 @media (max-width: 600px) {
   .container {
@@ -241,13 +301,15 @@
 
   .title {
     font-size: 24px;
-    margin-top: 40px; /* Increase top margin for space */
+    margin-top: 40px;
+    /* Increase top margin for space */
   }
 
   .inputArea {
     flex-direction: column;
     gap: 5px;
-    margin-bottom: 60px; /* Ensure space from the bottom */
+    margin-bottom: 60px;
+    /* Ensure space from the bottom */
   }
 
   .sendButton {
@@ -261,6 +323,8 @@
 
   .chatArea {
     padding: 5px;
-    margin-bottom: 80px; /* Ensure space from the bottom */
+    margin-bottom: 80px;
+    /* Ensure space from the bottom */
   }
 }
+

@@ -81,10 +81,10 @@ def run_subprocess(file_paths: List[str], embedding_model: str, region: str, vec
         logging.error(f"Error in subprocess: {e}")
 
 @app.post("/initialize")
-async def initialize(embedding_model: str = Form(...)):
+async def initialize(embedding_model: str = Form(...), region: str = Form(...), vector_store: str = Form(...)):
     try:
         result = subprocess.run(
-            [sys.executable, 'py-backend/app/initialize.py', embedding_model],
+            [sys.executable, 'py-backend/app/initialize.py', embedding_model, region, vector_store],
             capture_output=True,
             text=True
         )
@@ -93,10 +93,11 @@ async def initialize(embedding_model: str = Form(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/search")
-async def search(text: str = Form(...), chat_mode: str = Form(...), search_settings: str = Form(...)):
+async def search(text: str = Form(...), chat_mode: str = Form(...), search_settings: str = Form(...), cohere_reranker_api_key: str = Form(default="")):
+    print(f"Received: text={text}, chat_mode={chat_mode}, search_settings={search_settings}, cohere_reranker_api_key={cohere_reranker_api_key}")
     try:
         result = subprocess.run(
-            [sys.executable, 'py-backend/app/search.py', text, chat_mode, search_settings],
+            [sys.executable, 'py-backend/app/search.py', text, chat_mode, search_settings, cohere_reranker_api_key],
             capture_output=True,
             text=True
         )

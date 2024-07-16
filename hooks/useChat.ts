@@ -1,6 +1,6 @@
 import { useState, useRef, FormEvent, KeyboardEvent } from 'react';
 import usePasteHandler from './usePasteHandler';
-import useFileHandler from '../hooks/useFileHandler';
+import useFileHandler from './useFileHandler';
 import { sendMessageToApi, searchApi, websearchApi } from '../utils/api';
 import useMessageHandler from './useMessageHandler';
 
@@ -65,7 +65,7 @@ export default function useChat(settings, searchSettings) {
       const assistantMessageId = newMessageId + 1;
 
       if (settings.chatMode === 'RAG') {
-        ragResult = await searchApi(text, settings.chatMode, searchSettings);
+        ragResult = await searchApi(text, settings.chatMode, searchSettings, settings.cohereRerankerApiKey || '');
         addMessage({ id: assistantMessageId, text: 'Done!', isUser: false });
       } else if (settings.chatMode === 'Web Search') {
         websearchResult = await websearchApi(text, settings.chatMode, settings.tavilySearchApiKey);

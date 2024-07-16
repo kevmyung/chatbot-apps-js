@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import styles from '../app/SearchPopup.module.css';
+import styles from '../styles/SearchPopup.module.css';
 import { useSearchHandler } from '../hooks/useSearchHandler';
 
 interface FileData {
@@ -87,7 +87,7 @@ export default function FileUpload({ searchSettings, onClose }: FileUploadProps)
     clearMessages();
     setIsProcessing(true);
     try {
-      await initializeFiles(searchSettings.embeddingModel);
+      await initializeFiles(searchSettings.embeddingModel, searchSettings.embRegion, searchSettings.vectorStore);
       setSuccessMessage('Initialization successful.');
     } catch (error) {
       console.error('Error initializing files:', error);

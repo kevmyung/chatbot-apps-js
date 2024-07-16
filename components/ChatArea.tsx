@@ -1,10 +1,11 @@
-import styles from '../app/ChatInterface.module.css';
+import React from 'react';
+import styles from '../styles/ChatInterface.module.css';
 import ChatMessage from './ChatMessage';
 
 interface ChatAreaProps {
   messages: { id: number, text: string, isUser: boolean }[];
   messagesEndRef: React.RefObject<HTMLDivElement>;
-  isSearching: boolean; 
+  isSearching: boolean;
 }
 
 export default function ChatArea({ messages, messagesEndRef, isSearching }: ChatAreaProps) {

@@ -15,14 +15,22 @@
     "@aws-sdk/client-bedrock-runtime": "^3.609.0",
     "@langchain/aws": "^0.0.1",
     "@langchain/core": "^0.2.15",
+    "@types/react-copy-to-clipboard": "^5.0.7",
     "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
     "formidable": "^3.5.1",
+    "highlight.js": "^11.10.0",
     "langchain": "^0.2.9",
     "next": "14.2.4",
+    "next-transpile-modules": "^10.0.1",
     "react": "^18",
+    "react-code-blocks": "^0.1.6",
+    "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18",
     "react-dropzone": "^14.2.3",
-    "react-icons": "^5.2.1"
+    "react-highlight": "^0.15.0",
+    "react-icons": "^5.2.1",
+    "react-syntax-highlighter": "^15.5.0"
   },
   "devDependencies": {
     "@types/node": "^20",

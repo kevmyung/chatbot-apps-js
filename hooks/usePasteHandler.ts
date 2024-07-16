@@ -28,8 +28,14 @@ export default function usePasteHandler(inputRef: React.RefObject<HTMLDivElement
             textAdded = true;
             item.getAsString((text) => {
               if (inputRef.current) {
-                const textNode = document.createTextNode(text);
-                inputRef.current.appendChild(textNode);
+                const lines = text.split('\n');
+                lines.forEach((line, index) => {
+                  if (index > 0) {
+                    inputRef.current?.appendChild(document.createElement('br'));
+                  }
+                  const textNode = document.createTextNode(line);
+                  inputRef.current?.appendChild(textNode);
+                });
               }
             });
           }

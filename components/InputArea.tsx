@@ -1,7 +1,6 @@
 import React, { useRef, ChangeEvent, FormEvent, KeyboardEvent } from 'react';
 import { FaPaperclip, FaTimes } from 'react-icons/fa';
-import styles from '../app/ChatInterface.module.css';
-import { Message } from '../hooks/useChat';
+import styles from '../styles/ChatInterface.module.css';
 
 interface InputAreaProps {
   inputRef: React.RefObject<HTMLDivElement>;

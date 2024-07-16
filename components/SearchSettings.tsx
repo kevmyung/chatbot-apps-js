@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from '../app/SearchPopup.module.css';
+import styles from '../styles/SearchPopup.module.css';
 
 interface SearchSettingsProps {
   searchSettings: {
@@ -33,7 +33,7 @@ export default function SearchSettings({ searchSettings, onSave }: SearchSetting
   const handleSetDefaultSettings = () => {
     setTempEmbeddingModel('amazon.titan-embed-text-v2:0');
     setTempEmbRegion('us-east-1');
-    setTempVectorStore('OpenSearch');
+    setTempVectorStore('Chroma');
     setSuccessMessage('Settings reset to default!');
     setTimeout(() => setSuccessMessage(null), 3000);
   };
@@ -58,6 +58,7 @@ export default function SearchSettings({ searchSettings, onSave }: SearchSetting
         <h4>Vector Store</h4>
         <select value={tempVectorStore} onChange={(e) => setTempVectorStore(e.target.value)}>
           <option value="OpenSearch">OpenSearch</option>
+          <option value="Chroma">Chroma</option>
         </select>
       </div>
       <div className={styles.buttonGroup}>
